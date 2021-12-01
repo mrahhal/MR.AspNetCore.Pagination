@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MR.AspNetCore.Pagination\MR.AspNetCore.Pagination.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--  -->
+  </ItemGroup>
+
+</Project>

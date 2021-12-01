@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Pagination for ASP.NET Core and Entity Framework Core.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--  -->
+  </ItemGroup>
+
+</Project>
