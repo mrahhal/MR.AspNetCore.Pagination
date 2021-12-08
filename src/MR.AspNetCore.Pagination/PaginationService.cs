@@ -18,7 +18,7 @@ public interface IPaginationService
 	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func that gets the reference by id.</param>
-	/// <param name="map">A mapper to transform from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="map">A func that decorates the source to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
 	/// <returns>The keyset pagination result.</returns>
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
