@@ -6,6 +6,6 @@
 
 Pagination for ASP.NET Core.
 
-Supports both offset and keyset pagination when using Entity Framework Core.
+Supports both offset and keyset pagination over `IEnumerable` (in memory data) or `IQueryable` (Entity Framework Core).
 
 Keyset pagination support uses [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination).
