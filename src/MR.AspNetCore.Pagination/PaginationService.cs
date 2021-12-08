@@ -142,7 +142,7 @@ public class PaginationService : IPaginationService
 		var hasPrevious = await keysetContext.HasPreviousAsync(data);
 		var hasNext = await keysetContext.HasNextAsync(data);
 
-		return new KeysetPaginationResult<TOut>(data, count, hasPrevious, hasNext);
+		return new KeysetPaginationResult<TOut>(data, count, pageSize, hasPrevious, hasNext);
 	}
 
 	private QueryModel ParseQueryModel(IQueryCollection requestQuery)
