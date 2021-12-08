@@ -27,6 +27,20 @@ public interface IPaginationService
 		Func<IQueryable<T>, IQueryable<TOut>> map)
 		where T : class
 		where TOut : class;
+
+	/// <summary>
+	/// Paginates data using offset pagination.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="map">A func that decorates the source to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <returns>The offset pagination result.</returns>
+	Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Func<IQueryable<T>, IQueryable<TOut>> map)
+		where T : class
+		where TOut : class;
 }
 
 /// <summary>
@@ -85,9 +99,9 @@ public class PaginationService : IPaginationService
 		if (getReferenceAsync == null) throw new ArgumentNullException(nameof(getReferenceAsync));
 		if (map == null) throw new ArgumentNullException(nameof(map));
 
-		var model = ParseQueryModel(_httpContext.Request.Query);
+		var model = ParseKeysetQueryModel(_httpContext.Request.Query);
 		var query = source;
-		var pageSize = model.Size;
+		var pageSize = ResolvePageSize(model);
 
 		var count = await query.CountAsync();
 
@@ -145,9 +159,46 @@ public class PaginationService : IPaginationService
 		return new KeysetPaginationResult<TOut>(data, count, pageSize, hasPrevious, hasNext);
 	}
 
-	private QueryModel ParseQueryModel(IQueryCollection requestQuery)
+	/// <inheritdoc/>
+	public async Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Func<IQueryable<T>, IQueryable<TOut>> map)
+		where T : class
+		where TOut : class
 	{
-		var model = new QueryModel();
+		if (source == null) throw new ArgumentNullException(nameof(source));
+		if (map == null) throw new ArgumentNullException(nameof(map));
+
+		var model = ParseOffsetQueryModel(_httpContext.Request.Query);
+		var query = source;
+		var pageSize = ResolvePageSize(model);
+		var page = model.Page;
+		if (page < 1)
+		{
+			// Guard against invalid page values by returning 1st page.
+			page = 1;
+		}
+
+		var count = await query.CountAsync();
+
+		query = source.Skip((page - 1) * pageSize).Take(pageSize);
+
+		var data = await query.ApplyMapper(map).ToListAsync();
+
+		return new OffsetPaginationResult<TOut>(data, count, pageSize);
+	}
+
+	private int ResolvePageSize(QueryModelBase model)
+	{
+		if (model.Size != null) return model.Size.Value;
+		return _options.DefaultSize;
+	}
+
+	private KeysetQueryModel ParseKeysetQueryModel(IQueryCollection requestQuery)
+	{
+		var model = new KeysetQueryModel();
+
+		ParseIntoQueryModelBase(requestQuery, model);
 
 		if (requestQuery.ContainsKey(_options.FirstQueryParameterName))
 		{
@@ -211,7 +262,42 @@ public class PaginationService : IPaginationService
 		return model;
 	}
 
-	private class QueryModel
+	private OffsetQueryModel ParseOffsetQueryModel(IQueryCollection requestQuery)
+	{
+		var model = new OffsetQueryModel();
+
+		ParseIntoQueryModelBase(requestQuery, model);
+
+		if (requestQuery.ContainsKey(_options.PageQueryParameterName))
+		{
+			var page = requestQuery[_options.PageQueryParameterName][0];
+			if (int.TryParse(page, out var pageIntValue))
+			{
+				model.Page = pageIntValue;
+			}
+		}
+
+		return model;
+	}
+
+	private void ParseIntoQueryModelBase(IQueryCollection requestQuery, QueryModelBase model)
+	{
+		if (_options.CanChangeSizeFromQuery && requestQuery.ContainsKey(_options.SizeQueryParameterName))
+		{
+			var size = requestQuery[_options.SizeQueryParameterName][0];
+			if (int.TryParse(size, out var sizeIntValue))
+			{
+				model.Size = sizeIntValue;
+			}
+		}
+	}
+
+	private abstract class QueryModelBase
+	{
+		public int? Size { get; set; }
+	}
+
+	private class KeysetQueryModel : QueryModelBase
 	{
 		public bool First { get; set; }
 
@@ -220,7 +306,10 @@ public class PaginationService : IPaginationService
 		public object? After { get; set; }
 
 		public bool Last { get; set; }
+	}
 
-		public int Size { get; set; }
+	private class OffsetQueryModel : QueryModelBase
+	{
+		public int Page { get; set; } = 1;
 	}
 }
