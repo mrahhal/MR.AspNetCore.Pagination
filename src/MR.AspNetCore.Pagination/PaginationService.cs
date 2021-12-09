@@ -60,8 +60,8 @@ public static class PaginationServiceExtensions
 	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
 		this IPaginationService @this,
 		IQueryable<T> source,
-		Func<object, Task<T>> getReferenceAsync,
-		Action<KeysetPaginationBuilder<T>> builderAction)
+		Action<KeysetPaginationBuilder<T>> builderAction,
+		Func<object, Task<T>> getReferenceAsync)
 		where T : class
 		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query);
 

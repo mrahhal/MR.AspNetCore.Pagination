@@ -48,8 +48,8 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var result = await Service.KeysetPaginateAsync(
 				query,
-				async id => await DbContext.FindAsync<Order>(id),
-				b => b.Ascending(o => o.Id));
+				b => b.Ascending(o => o.Id),
+				async id => await DbContext.FindAsync<Order>(id));
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
 			result.Data.Should().HaveCount(defaultPageSize);
