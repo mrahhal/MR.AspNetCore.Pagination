@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Basic.Dtos;
 using Basic.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
