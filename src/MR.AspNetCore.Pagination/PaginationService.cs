@@ -108,15 +108,7 @@ public class PaginationService : IPaginationService
 		var data = default(List<TOut>);
 		KeysetPaginationContext<T> keysetContext;
 
-		if (model.First)
-		{
-			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward);
-			data = await keysetContext.Query
-			  .Take(pageSize)
-			  .ApplyMapper(map)
-			  .ToListAsync();
-		}
-		else if (model.Last)
+		if (model.Last)
 		{
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward);
 			data = await keysetContext.Query
@@ -144,7 +136,8 @@ public class PaginationService : IPaginationService
 		}
 		else
 		{
-			keysetContext = query.KeysetPaginate(builderAction);
+			// First page
+			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward);
 			data = await keysetContext.Query
 			  .Take(pageSize)
 			  .ApplyMapper(map)
