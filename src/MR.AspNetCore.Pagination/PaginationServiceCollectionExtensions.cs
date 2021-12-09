@@ -8,9 +8,12 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class PaginationServiceCollectionExtensions
 {
-	private static IServiceCollection AddPaginationCore(this IServiceCollection services)
+	private static IServiceCollection AddPaginationCore(
+		this IServiceCollection services,
+		Action<PaginationOptions> configure)
 	{
 		services.AddHttpContextAccessor();
+		services.Configure(configure);
 		services.TryAddScoped<IPaginationService, PaginationService>();
 		return services;
 	}
@@ -26,7 +29,7 @@ public static class PaginationServiceCollectionExtensions
 			throw new ArgumentNullException(nameof(services));
 		}
 
-		return AddPaginationCore(services);
+		return AddPaginationCore(services, o => { });
 	}
 
 	/// <summary>
@@ -45,7 +48,6 @@ public static class PaginationServiceCollectionExtensions
 			throw new ArgumentNullException(nameof(configure));
 		}
 
-		services.Configure(configure);
-		return AddPaginationCore(services);
+		return AddPaginationCore(services, configure);
 	}
 }
