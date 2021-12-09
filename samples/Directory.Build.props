@@ -1,0 +1,9 @@
+﻿<Project>
+
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+</Project>
