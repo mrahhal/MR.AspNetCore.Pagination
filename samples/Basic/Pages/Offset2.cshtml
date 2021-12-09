@@ -1,0 +1,38 @@
+﻿@page
+@model Offset2Model
+
+<div class="text-center">
+    <div>Using manual mapping</div>
+
+    <div class="users">
+        @foreach (var user in Model.Users.Data)
+        {
+            <div class="user">
+                @user.Name (@user.Created.ToLongDateString())
+            </div>
+        }
+    </div>
+
+    <div class="mt-3" style="text-align: center">
+        (@Model.Users.TotalCount items)
+    </div>
+
+    <div class="pagination mt-3">
+        @{
+            var lastPage = Model.Users.TotalCount / Model.Users.PageSize + 1;
+            var currentPage = Model.Users.Page;
+            var hasNext = currentPage < lastPage;
+            var hasPrevious = currentPage > 1;
+        }
+        <a asp-page="/Offset1" asp-route-p="@(1)">1</a>
+        @if (hasPrevious)
+        {
+            <a asp-page="/Offset1" asp-route-p="@(currentPage - 1)">@(currentPage - 1)</a>
+        }
+        @if (hasNext)
+        {
+            <a asp-page="/Offset1" asp-route-p="@(currentPage + 1)">@(currentPage + 1)</a>
+        }
+        <a asp-page="/Offset1" asp-route-p="@lastPage">@lastPage</a>
+    </div>
+</div>

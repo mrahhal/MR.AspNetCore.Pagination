@@ -19,7 +19,10 @@ namespace Basic
 			services.AddRazorPages();
 
 			services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
-			services.AddPagination();
+			services.AddPagination(options =>
+			{
+				options.PageQueryParameterName = "p";
+			});
 
 			services.AddAutoMapper(c =>
 			{

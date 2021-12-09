@@ -4,12 +4,12 @@ using MR.AspNetCore.Pagination;
 
 namespace Basic.Pages
 {
-	public class IndexModel : PageModel
+	public class Offset1Model : PageModel
 	{
 		private readonly AppDbContext _dbContext;
 		private readonly IPaginationService _paginationService;
 
-		public IndexModel(
+		public Offset1Model(
 			AppDbContext dbContext,
 			IPaginationService paginationService)
 		{
@@ -17,16 +17,13 @@ namespace Basic.Pages
 			_paginationService = paginationService;
 		}
 
-		public KeysetPaginationResult<User> Users { get; set; }
+		public OffsetPaginationResult<User> Users { get; set; }
 
 		public async Task OnGet()
 		{
-			var query = _dbContext.Users;
+			var query = _dbContext.Users.OrderByDescending(x => x.Created);
 
-			Users = await _paginationService.KeysetPaginateAsync(
-				query,
-				b => b.Descending(x => x.Created),
-				async id => await _dbContext.Users.FindAsync(id));
+			Users = await _paginationService.OffsetPaginateAsync(query);
 		}
 	}
 }

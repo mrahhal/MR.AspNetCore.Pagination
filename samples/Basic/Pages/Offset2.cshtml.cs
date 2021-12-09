@@ -7,13 +7,13 @@ using MR.AspNetCore.Pagination;
 
 namespace Basic.Pages
 {
-	public class Keyset2Model : PageModel
+	public class Offset2Model : PageModel
 	{
 		private readonly AppDbContext _dbContext;
 		private readonly IPaginationService _paginationService;
 		private readonly IMapper _mapper;
 
-		public Keyset2Model(
+		public Offset2Model(
 			AppDbContext dbContext,
 			IPaginationService paginationService,
 			IMapper mapper)
@@ -23,17 +23,15 @@ namespace Basic.Pages
 			_mapper = mapper;
 		}
 
-		public KeysetPaginationResult<UserDto> Users { get; set; }
+		public OffsetPaginationResult<UserDto> Users { get; set; }
 
 		public async Task OnGet()
 		{
-			var query = _dbContext.Users;
+			var query = _dbContext.Users.OrderByDescending(x => x.Created);
 
-			Users = await _paginationService.KeysetPaginateAsync(
+			Users = await _paginationService.OffsetPaginateAsync(
 				query,
-				b => b.Descending(x => x.Created),
-				async id => await _dbContext.Users.FindAsync(id),
-				query => query.ProjectTo<UserDto>(_mapper.ConfigurationProvider));
+				query => query.Select(x => new UserDto { Id = x.Id, Name = x.Name, Created = x.Created }));
 		}
 	}
 }
