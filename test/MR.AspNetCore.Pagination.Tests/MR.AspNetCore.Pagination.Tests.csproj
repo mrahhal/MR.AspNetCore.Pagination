@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <RootNamespace>MR.AspNetCore.Pagination</RootNamespace>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\MR.AspNetCore.Pagination\MR.AspNetCore.Pagination.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <!--  -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
   </ItemGroup>
 
 </Project>
