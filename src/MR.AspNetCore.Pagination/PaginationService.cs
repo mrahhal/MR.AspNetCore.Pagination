@@ -116,7 +116,7 @@ public class PaginationService : IPaginationService
 		var query = source;
 		var pageSize = ResolvePageSize(model);
 
-		var count = await query.CountAsync();
+		var totalCount = await query.CountAsync();
 
 		var data = default(List<TOut>);
 		KeysetPaginationContext<T> keysetContext;
@@ -162,7 +162,7 @@ public class PaginationService : IPaginationService
 		var hasPrevious = await keysetContext.HasPreviousAsync(data);
 		var hasNext = await keysetContext.HasNextAsync(data);
 
-		return new KeysetPaginationResult<TOut>(data, count, pageSize, hasPrevious, hasNext);
+		return new KeysetPaginationResult<TOut>(data, totalCount, pageSize, hasPrevious, hasNext);
 	}
 
 	/// <inheritdoc/>
@@ -185,13 +185,13 @@ public class PaginationService : IPaginationService
 			page = 1;
 		}
 
-		var count = await query.CountAsync();
+		var totalCount = await query.CountAsync();
 
 		query = source.Skip((page - 1) * pageSize).Take(pageSize);
 
 		var data = await query.ApplyMapper(map).ToListAsync();
 
-		return new OffsetPaginationResult<TOut>(data, count, pageSize);
+		return new OffsetPaginationResult<TOut>(data, totalCount, pageSize, page);
 	}
 
 	private int ResolvePageSize(QueryModelBase model)
