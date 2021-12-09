@@ -64,6 +64,19 @@ public static class PaginationServiceExtensions
 		Action<KeysetPaginationBuilder<T>> builderAction)
 		where T : class
 		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query);
+
+	/// <summary>
+	/// Paginates data using offset pagination.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The queryable source.</param>
+	/// <returns>The offset pagination result.</returns>
+	public static Task<OffsetPaginationResult<T>> OffsetPaginateAsync<T>(
+		this IPaginationService @this,
+		IQueryable<T> source)
+		where T : class
+		=> @this.OffsetPaginateAsync(source, query => query);
 }
 
 /// <summary>
