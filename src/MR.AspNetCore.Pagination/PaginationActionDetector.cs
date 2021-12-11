@@ -9,9 +9,23 @@ namespace MR.AspNetCore.Pagination;
 public static class PaginationActionDetector
 {
 	/// <summary>
+	/// Determines whether the method returns any pagination result.
+	/// Unwraps Tasks and ActionResults.
+	/// </summary>
+	/// <param name="methodInfo">The method to inspect.</param>
+	/// <param name="type">The <see cref="Type"/> of the pagination result.</param>
+	public static bool IsPaginationResultAction(MethodInfo methodInfo, [NotNullWhen(true)] out Type? type)
+	{
+		return IsKeysetPaginationResultAction(methodInfo, out type)
+			|| IsOffsetPaginationResultAction(methodInfo, out type);
+	}
+
+	/// <summary>
 	/// Determines whether the method returns a keyset pagination result.
 	/// Unwraps Tasks and ActionResults.
 	/// </summary>
+	/// <param name="methodInfo">The method to inspect.</param>
+	/// <param name="type">The <see cref="Type"/> of the pagination result.</param>
 	public static bool IsKeysetPaginationResultAction(MethodInfo methodInfo, [NotNullWhen(true)] out Type? type)
 	{
 		return IsPaginationResultAction(
@@ -24,6 +38,8 @@ public static class PaginationActionDetector
 	/// Determines whether the method returns an offset pagination result.
 	/// Unwraps Tasks and ActionResults.
 	/// </summary>
+	/// <param name="methodInfo">The method to inspect.</param>
+	/// <param name="type">The <see cref="Type"/> of the pagination result.</param>
 	public static bool IsOffsetPaginationResultAction(MethodInfo methodInfo, [NotNullWhen(true)] out Type? type)
 	{
 		return IsPaginationResultAction(
