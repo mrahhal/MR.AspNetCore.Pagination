@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace MR.AspNetCore.Pagination.Swashbuckle;
+namespace MR.AspNetCore.Pagination;
 
+/// <summary>
+/// Includes reflection helpers to detect methods that return pagination results.
+/// </summary>
 public static class PaginationActionDetector
 {
 	/// <summary>
