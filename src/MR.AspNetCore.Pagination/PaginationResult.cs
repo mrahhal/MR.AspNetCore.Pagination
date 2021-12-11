@@ -14,7 +14,11 @@ public record KeysetPaginationResult<T>(
 	int TotalCount,
 	int PageSize,
 	bool HasPrevious,
-	bool HasNext);
+	bool HasNext)
+{
+	public static KeysetPaginationResult<T> Empty { get; }
+		= new (Enumerable.Empty<T>(), 0, 0, false, false);
+}
 
 /// <summary>
 /// Represents the result of the offset pagination.
@@ -28,4 +32,8 @@ public record OffsetPaginationResult<T>(
 	IEnumerable<T> Data,
 	int TotalCount,
 	int PageSize,
-	int Page);
+	int Page)
+{
+	public static OffsetPaginationResult<T> Empty { get; }
+		= new(Enumerable.Empty<T>(), 0, 0, 0);
+}

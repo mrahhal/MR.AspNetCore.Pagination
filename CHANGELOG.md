@@ -7,4 +7,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-Nothing yet...
+- Add Empty static results in KeysetPaginationResult and OffsetPaginationResult.
