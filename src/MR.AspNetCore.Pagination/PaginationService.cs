@@ -19,12 +19,14 @@ public interface IPaginationService
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func that gets the reference by id.</param>
 	/// <param name="map">A func that decorates the source to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The keyset pagination result.</returns>
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<object, Task<T>> getReferenceAsync,
-		Func<IQueryable<T>, IQueryable<TOut>> map)
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize = null)
 		where T : class
 		where TOut : class;
 
@@ -35,10 +37,28 @@ public interface IPaginationService
 	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
 	/// <param name="source">The queryable source.</param>
 	/// <param name="map">A func that decorates the source to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The offset pagination result.</returns>
 	Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
-		Func<IQueryable<T>, IQueryable<TOut>> map)
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize = null)
+		where T : class
+		where TOut : class;
+
+	/// <summary>
+	/// Paginates in memory data using offset pagination.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The in memory data source.</param>
+	/// <param name="map">A func to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <returns>The offset pagination result.</returns>
+	OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
+		IReadOnlyList<T> source,
+		Func<T, TOut> map,
+		int? pageSize = null)
 		where T : class
 		where TOut : class;
 }
@@ -56,14 +76,16 @@ public static class PaginationServiceExtensions
 	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func that gets the reference by id.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The keyset pagination result.</returns>
 	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
 		this IPaginationService @this,
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<object, Task<T>> getReferenceAsync)
+		Func<object, Task<T>> getReferenceAsync,
+		int? pageSize = null)
 		where T : class
-		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query);
+		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, pageSize);
 
 	/// <summary>
 	/// Paginates data using offset pagination.
@@ -71,12 +93,29 @@ public static class PaginationServiceExtensions
 	/// <typeparam name="T">The type of the entity.</typeparam>
 	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
 	/// <param name="source">The queryable source.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The offset pagination result.</returns>
 	public static Task<OffsetPaginationResult<T>> OffsetPaginateAsync<T>(
 		this IPaginationService @this,
-		IQueryable<T> source)
+		IQueryable<T> source,
+		int? pageSize = null)
 		where T : class
-		=> @this.OffsetPaginateAsync(source, query => query);
+		=> @this.OffsetPaginateAsync(source, query => query, pageSize);
+
+	/// <summary>
+	/// Paginates in memory data using offset pagination.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The in memory data source.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <returns>The offset pagination result.</returns>
+	public static OffsetPaginationResult<T> OffsetPaginate<T>(
+		this IPaginationService @this,
+		IReadOnlyList<T> source,
+		int? pageSize = null)
+		where T : class
+		=> @this.OffsetPaginate(source, x => x, pageSize);
 }
 
 /// <summary>
@@ -103,7 +142,8 @@ public class PaginationService : IPaginationService
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<object, Task<T>> getReferenceAsync,
-		Func<IQueryable<T>, IQueryable<TOut>> map)
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize)
 		where T : class
 		where TOut : class
 	{
@@ -114,7 +154,7 @@ public class PaginationService : IPaginationService
 
 		var model = ParseKeysetQueryModel(_httpContext.Request.Query);
 		var query = source;
-		var pageSize = ResolvePageSize(model);
+		var size = ResolvePageSize(model, pageSize);
 
 		var totalCount = await query.CountAsync();
 
@@ -125,7 +165,7 @@ public class PaginationService : IPaginationService
 		{
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward);
 			data = await keysetContext.Query
-			  .Take(pageSize)
+			  .Take(size)
 			  .ApplyMapper(map)
 			  .ToListAsync();
 		}
@@ -134,7 +174,7 @@ public class PaginationService : IPaginationService
 			var reference = await getReferenceAsync(model.After);
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward, reference);
 			data = await keysetContext.Query
-			  .Take(pageSize)
+			  .Take(size)
 			  .ApplyMapper(map)
 			  .ToListAsync();
 		}
@@ -143,7 +183,7 @@ public class PaginationService : IPaginationService
 			var reference = await getReferenceAsync(model.Before);
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward, reference);
 			data = await keysetContext.Query
-			  .Take(pageSize)
+			  .Take(size)
 			  .ApplyMapper(map)
 			  .ToListAsync();
 		}
@@ -152,7 +192,7 @@ public class PaginationService : IPaginationService
 			// First page
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward);
 			data = await keysetContext.Query
-			  .Take(pageSize)
+			  .Take(size)
 			  .ApplyMapper(map)
 			  .ToListAsync();
 		}
@@ -162,13 +202,14 @@ public class PaginationService : IPaginationService
 		var hasPrevious = await keysetContext.HasPreviousAsync(data);
 		var hasNext = await keysetContext.HasNextAsync(data);
 
-		return new KeysetPaginationResult<TOut>(data, totalCount, pageSize, hasPrevious, hasNext);
+		return new KeysetPaginationResult<TOut>(data, totalCount, size, hasPrevious, hasNext);
 	}
 
 	/// <inheritdoc/>
 	public async Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
-		Func<IQueryable<T>, IQueryable<TOut>> map)
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize)
 		where T : class
 		where TOut : class
 	{
@@ -177,7 +218,7 @@ public class PaginationService : IPaginationService
 
 		var model = ParseOffsetQueryModel(_httpContext.Request.Query);
 		var query = source;
-		var pageSize = ResolvePageSize(model);
+		var size = ResolvePageSize(model, pageSize);
 		var page = model.Page;
 		if (page < 1)
 		{
@@ -187,15 +228,60 @@ public class PaginationService : IPaginationService
 
 		var totalCount = await query.CountAsync();
 
-		query = source.Skip((page - 1) * pageSize).Take(pageSize);
+		query = source.Skip((page - 1) * size).Take(size);
 
 		var data = await query.ApplyMapper(map).ToListAsync();
 
-		return new OffsetPaginationResult<TOut>(data, totalCount, pageSize, page);
+		return new OffsetPaginationResult<TOut>(data, totalCount, size, page);
 	}
 
-	private int ResolvePageSize(QueryModelBase model)
+	/// <inheritdoc/>
+	public OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
+		IReadOnlyList<T> source,
+		Func<T, TOut> map,
+		int? pageSize)
+		where T : class
+		where TOut : class
 	{
+		if (source == null) throw new ArgumentNullException(nameof(source));
+		if (map == null) throw new ArgumentNullException(nameof(map));
+
+		var model = ParseOffsetQueryModel(_httpContext.Request.Query);
+		var size = ResolvePageSize(model, pageSize);
+		var page = model.Page;
+
+		var totalCount = source.Count;
+		var pageCount = (int)Math.Ceiling((double)totalCount / size);
+
+		var data = Page(source, page, size)
+			.Select(x => map(x))
+			.ToList();
+
+		return new OffsetPaginationResult<TOut>(
+			data,
+			totalCount,
+			size,
+			page);
+	}
+
+	private IEnumerable<T> Page<T>(IReadOnlyList<T> source, int page, int pageSize)
+	{
+		var data = new List<T>(capacity: pageSize);
+
+		var startOffset = (page - 1) * pageSize;
+		for (var i = startOffset; i < startOffset + pageSize; i++)
+		{
+			if (i >= source.Count) break;
+			data.Add(source[i]);
+		}
+
+		return data;
+	}
+
+	private int ResolvePageSize(QueryModelBase model, int? argumentPageSize)
+	{
+		if (argumentPageSize.HasValue) return argumentPageSize.Value;
+
 		if (model.Size != null) return model.Size.Value;
 		return _options.DefaultSize;
 	}

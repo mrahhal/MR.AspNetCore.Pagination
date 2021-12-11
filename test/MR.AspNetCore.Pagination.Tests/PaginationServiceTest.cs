@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using MR.AspNetCore.Pagination.TestModels;
 using Xunit;
@@ -9,6 +10,8 @@ namespace MR.AspNetCore.Pagination.Tests;
 
 public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 {
+	private const string PageParameter = "page";
+
 	public PaginationServiceTest(DatabaseFixture fixture)
 	{
 		var provider = fixture.BuildForService<PaginationService>(services =>
@@ -34,6 +37,10 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 	protected virtual void ConfigurePaginationOptions(PaginationOptions paginationOptions)
 	{
 	}
+
+	protected List<T> GetData<T>(KeysetPaginationResult<T> result) => result.Data as List<T>;
+
+	protected List<T> GetData<T>(OffsetPaginationResult<T> result) => result.Data as List<T>;
 
 	public class Basic : PaginationServiceTest
 	{
@@ -65,6 +72,37 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
 			result.Data.Should().HaveCount(defaultPageSize);
+		}
+	}
+
+	public class Page2 : PaginationServiceTest
+	{
+		public Page2(DatabaseFixture fixture) : base(fixture)
+		{
+		}
+
+		protected override IQueryCollection CreateQuery()
+		{
+			return new QueryCollection(new Dictionary<string, StringValues>
+			{
+				{ PageParameter, "2" },
+			});
+		}
+
+		[Fact]
+		public void OffsetPaginate_InMemory()
+		{
+			var orders = Enumerable.Range(1, 5)
+				.Select(x => new Order { Id = x })
+				.ToList();
+
+			var result = Service.OffsetPaginate(
+				orders,
+				pageSize: 2);
+
+			result.Data.Should().HaveCount(2);
+			GetData(result)[0].Id.Should().Be(3);
+			GetData(result)[1].Id.Should().Be(4);
 		}
 	}
 }
