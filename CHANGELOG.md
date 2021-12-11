@@ -8,3 +8,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 
 - Add Empty static results in KeysetPaginationResult and OffsetPaginationResult.
+- Move `PaginationActionDetector` to main package.
