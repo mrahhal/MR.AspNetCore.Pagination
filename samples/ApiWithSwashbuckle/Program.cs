@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen(c =>
 
 	c.TagActionsBy(api => new[] { api.RelativePath });
 
-	c.AddPaginationOperationFilter();
+	c.ConfigurePagination();
 });
 
 var app = builder.Build();
