@@ -10,7 +10,7 @@
 /// <param name="HasNext">Whether there's next data to the list.</param>
 /// <param name="PageSize">The size of the page. This is different from the actual size of <see cref="Data"/>.</param>
 public record KeysetPaginationResult<T>(
-	List<T> Data,
+	IEnumerable<T> Data,
 	int TotalCount,
 	int PageSize,
 	bool HasPrevious,
@@ -25,7 +25,7 @@ public record KeysetPaginationResult<T>(
 /// <param name="PageSize">The size of the page. This is different from the actual size of <see cref="Data"/>.</param>
 /// <param name="Page">The page number of this result.</param>
 public record OffsetPaginationResult<T>(
-	List<T> Data,
+	IEnumerable<T> Data,
 	int TotalCount,
 	int PageSize,
 	int Page);
