@@ -6,7 +6,7 @@ namespace MR.AspNetCore.Pagination;
 
 public class DatabaseFixture : IDisposable
 {
-	private static readonly object _lock = new ();
+	private static readonly object _lock = new();
 	private static bool _initialized;
 
 	public DatabaseFixture()
