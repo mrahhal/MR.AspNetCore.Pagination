@@ -75,7 +75,7 @@ jobs:
         path: artifacts
 
     - name: Publish packages to nuget.org
-      run: dotnet nuget push ./artifacts/packages/* --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./artifacts/packages/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
 
     - name: Create GitHub release
       uses: ncipollo/release-action@v1
