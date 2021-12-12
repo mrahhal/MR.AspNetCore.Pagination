@@ -112,7 +112,7 @@ There's a helper `PaginationActionDetector` class that can be used with reflecti
 
 [![NuGet version](https://badge.fury.io/nu/MR.AspNetCore.Pagination.Swashbuckle.svg)](https://www.nuget.org/packages/MR.AspNetCore.Pagination.Swashbuckle)
 
-This is a Swashbuckle support package for MR.AspNetCore.Pagination.
+This is a support package for [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore).
 
 Use it when you're using [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore) (swagger). Actions that return keyset/offset pagination results will automatically have the query parameters (page, before, after, etc) show up in swagger ui.
 
