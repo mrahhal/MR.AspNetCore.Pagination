@@ -55,7 +55,7 @@ ExitIfFailed
 
 $testLoggersArg = ''
 if ($ci) {
-	$testLoggersArg = '--logger "GitHubActions;report-warnings=false"'
+	$testLoggersArg = '--logger "GitHubActions"'
 }
 
 foreach ($testProject in $testProjects) {
