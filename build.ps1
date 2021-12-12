@@ -29,16 +29,15 @@ $srcProjects = @(Get-ChildItem -Path './src/*/*.csproj' -File)
 $testProjects = @(Get-ChildItem -Path './test/*/*.csproj' -File)
 $allProjects = $srcProjects + $testProjects
 
-# git
+# git and build info
 
 $sha = git rev-parse HEAD
 $tags = [string[]]@(git tag --points-at HEAD) | Where-Object { $_ -Match 'v[0-9]+\.[0-9]+\.[0-9]+.*' }
 $tagged = !!$tags.Length
 
-# ---
-
 $ci = Test-Path env:GITHUB_ACTIONS
-$dev = -not $ci -and -not $tagged
+$addPrerelease = !$tagged
+
 $stamp = CreateStamp
 
 # ---
@@ -66,10 +65,9 @@ ExitIfFailed
 if ($Pack) {
 	CleanArtifacts
 
-	$versionSuffix = Select-Xml -Path 'version.props' -XPath '/Project/PropertyGroup/VersionSuffix' | ForEach-Object { $_.Node.InnerXML }
-
 	$versionSuffixArg = ''
-	if ($ci -or $dev) {
+	if ($addPrerelease) {
+		$versionSuffix = Select-Xml -Path 'version.props' -XPath '/Project/PropertyGroup/VersionSuffix' | ForEach-Object { $_.Node.InnerXML }
 		$versionSuffix = CompoundVersionSuffix ($versionSuffix, "ci.$stamp+sha.$sha")
 		$versionSuffixArg = "--version-suffix $versionSuffix"
 	}
