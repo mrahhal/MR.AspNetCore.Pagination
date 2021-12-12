@@ -6,6 +6,9 @@ if ($hasUncommittedChanges) {
 
 # Parse version from version.props file.
 $version = Select-Xml -Path 'version.props' -XPath '/Project/PropertyGroup/VersionPrefix' | ForEach-Object { $_.Node.InnerXML }
+$versionSuffix = Select-Xml -Path 'version.props' -XPath '/Project/PropertyGroup/VersionSuffix' | ForEach-Object { $_.Node.InnerXML }
+
+$version = (@($version, $versionSuffix) | Where-Object { $_ }) -join '-'
 
 $tag = "v$version"
 
