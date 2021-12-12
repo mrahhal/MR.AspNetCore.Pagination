@@ -59,7 +59,7 @@ if ($ci) {
 }
 
 foreach ($testProject in $testProjects) {
-	dotnet test $testProject --no-restore -c Release $testLoggersArg
+	Invoke-Expression "dotnet test $testProject --no-restore -c Release $testLoggersArg"
 }
 ExitIfFailed
 
