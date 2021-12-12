@@ -38,10 +38,6 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 	{
 	}
 
-	protected List<T> GetData<T>(KeysetPaginationResult<T> result) => result.Data as List<T>;
-
-	protected List<T> GetData<T>(OffsetPaginationResult<T> result) => result.Data as List<T>;
-
 	protected List<Order> CreateOrders(int count) => Enumerable.Range(1, count)
 		.Select(x => new Order { Id = x })
 		.ToList();
@@ -110,7 +106,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
 			result.Data.Should().HaveCount(defaultPageSize);
-			GetData(result)[0].Should().BeOfType<OrderDto>();
+			result.Data[0].Should().BeOfType<OrderDto>();
 		}
 
 		[Fact]
@@ -124,7 +120,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
 			result.Data.Should().HaveCount(defaultPageSize);
-			GetData(result)[0].Should().BeOfType<OrderDto>();
+			result.Data[0].Should().BeOfType<OrderDto>();
 		}
 
 		[Fact]
@@ -138,7 +134,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 				x => new OrderDto { Id = x.Id });
 
 			result.Data.Should().HaveCount(defaultPageSize);
-			GetData(result)[0].Should().BeOfType<OrderDto>();
+			result.Data[0].Should().BeOfType<OrderDto>();
 		}
 	}
 
@@ -214,8 +210,8 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 				pageSize: 2);
 
 			result.Data.Should().HaveCount(2);
-			GetData(result)[0].Id.Should().Be(3);
-			GetData(result)[1].Id.Should().Be(4);
+			result.Data[0].Id.Should().Be(3);
+			result.Data[1].Id.Should().Be(4);
 		}
 
 		[Fact]
@@ -228,7 +224,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 				pageSize: 4);
 
 			result.Data.Should().HaveCount(1);
-			GetData(result)[0].Id.Should().Be(5);
+			result.Data[0].Id.Should().Be(5);
 		}
 	}
 }
