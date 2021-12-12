@@ -19,6 +19,10 @@ function CleanArtifacts() {
 	}
 }
 
+function CompoundVersionSuffix($versionSuffixes) {
+	return (@($versionSuffixes) | Where-Object { $_ }) -join '.'
+}
+
 # Resolve src/test projects
 
 $srcProjects = @(Get-ChildItem -Path './src/*/*.csproj' -File)
@@ -49,7 +53,7 @@ foreach ($srcProject in $srcProjects) {
 }
 ExitIfFailed
 
-$testLoggersArg = ""
+$testLoggersArg = ''
 if ($ci) {
 	$testLoggersArg = '--logger "GitHubActions;report-warnings=false"'
 }
@@ -62,9 +66,12 @@ ExitIfFailed
 if ($Pack) {
 	CleanArtifacts
 
-	$versionSuffixArg = ""
+	$versionSuffix = Select-Xml -Path 'version.props' -XPath '/Project/PropertyGroup/VersionSuffix' | ForEach-Object { $_.Node.InnerXML }
+
+	$versionSuffixArg = ''
 	if ($ci -or $dev) {
-		$versionSuffixArg = "--version-suffix ci.$stamp+sha.$sha"
+		$versionSuffix = CompoundVersionSuffix ($versionSuffix, "ci.$stamp+sha.$sha")
+		$versionSuffixArg = "--version-suffix $versionSuffix"
 	}
 
 	foreach ($srcProject in $srcProjects) {
