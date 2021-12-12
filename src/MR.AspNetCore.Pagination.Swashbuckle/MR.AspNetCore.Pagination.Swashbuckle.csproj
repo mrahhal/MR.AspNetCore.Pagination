@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Swashbuckle support package for MR.AspNetCore.Pagination.</Description>
+    <Description>MR.AspNetCore.Pagination support package for Swashbuckle.</Description>
   </PropertyGroup>
 
   <ItemGroup>
