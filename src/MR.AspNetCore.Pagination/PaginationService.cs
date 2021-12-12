@@ -143,7 +143,7 @@ public class PaginationService : IPaginationService
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<object, Task<T>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
-		int? pageSize)
+		int? pageSize = null)
 		where T : class
 		where TOut : class
 	{
@@ -209,7 +209,7 @@ public class PaginationService : IPaginationService
 	public async Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
-		int? pageSize)
+		int? pageSize = null)
 		where T : class
 		where TOut : class
 	{
@@ -239,7 +239,7 @@ public class PaginationService : IPaginationService
 	public OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
 		IReadOnlyList<T> source,
 		Func<T, TOut> map,
-		int? pageSize)
+		int? pageSize = null)
 		where T : class
 		where TOut : class
 	{

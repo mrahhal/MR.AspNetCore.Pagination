@@ -42,6 +42,10 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 	protected List<T> GetData<T>(OffsetPaginationResult<T> result) => result.Data as List<T>;
 
+	protected List<Order> CreateOrders(int count) => Enumerable.Range(1, count)
+		.Select(x => new Order { Id = x })
+		.ToList();
+
 	public class Basic : PaginationServiceTest
 	{
 		public Basic(DatabaseFixture fixture) : base(fixture)
@@ -49,7 +53,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 		}
 
 		[Fact]
-		public async Task KeysetPaginate()
+		public async Task KeysetPaginateAsync()
 		{
 			var query = DbContext.Orders;
 
@@ -63,7 +67,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 		}
 
 		[Fact]
-		public async Task OffsetPaginate()
+		public async Task OffsetPaginateAsync()
 		{
 			var query = DbContext.Orders;
 
@@ -72,6 +76,117 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
 			result.Data.Should().HaveCount(defaultPageSize);
+		}
+
+		[Fact]
+		public void OffsetPaginate()
+		{
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			var orders = CreateOrders(defaultPageSize + 5);
+
+			var result = Service.OffsetPaginate(
+				orders);
+
+			result.Data.Should().HaveCount(defaultPageSize);
+		}
+	}
+
+	public class Map : PaginationServiceTest
+	{
+		public Map(DatabaseFixture fixture) : base(fixture)
+		{
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync()
+		{
+			var query = DbContext.Orders;
+
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				b => b.Ascending(o => o.Id),
+				async id => await DbContext.FindAsync<Order>(id),
+				query => query.Select(x => new OrderDto { Id = x.Id }));
+
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			result.Data.Should().HaveCount(defaultPageSize);
+			GetData(result)[0].Should().BeOfType<OrderDto>();
+		}
+
+		[Fact]
+		public async Task OffsetPaginateAsync()
+		{
+			var query = DbContext.Orders;
+
+			var result = await Service.OffsetPaginateAsync(
+				query,
+				query => query.Select(x => new OrderDto { Id = x.Id }));
+
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			result.Data.Should().HaveCount(defaultPageSize);
+			GetData(result)[0].Should().BeOfType<OrderDto>();
+		}
+
+		[Fact]
+		public void OffsetPaginate()
+		{
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			var orders = CreateOrders(defaultPageSize + 5);
+
+			var result = Service.OffsetPaginate(
+				orders,
+				x => new OrderDto { Id = x.Id });
+
+			result.Data.Should().HaveCount(defaultPageSize);
+			GetData(result)[0].Should().BeOfType<OrderDto>();
+		}
+	}
+
+	public class PageArgument : PaginationServiceTest
+	{
+		public PageArgument(DatabaseFixture fixture) : base(fixture)
+		{
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync()
+		{
+			var query = DbContext.Orders;
+
+			var pageSize = 2;
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				b => b.Ascending(o => o.Id),
+				async id => await DbContext.FindAsync<Order>(id),
+				pageSize);
+
+			result.Data.Should().HaveCount(pageSize);
+		}
+
+		[Fact]
+		public async Task OffsetPaginateAsync()
+		{
+			var query = DbContext.Orders;
+
+			var pageSize = 2;
+			var result = await Service.OffsetPaginateAsync(
+				query,
+				pageSize);
+
+			result.Data.Should().HaveCount(pageSize);
+		}
+
+		[Fact]
+		public void OffsetPaginate()
+		{
+			var orders = CreateOrders(5);
+
+			var pageSize = 2;
+			var result = Service.OffsetPaginate(
+				orders,
+				pageSize);
+
+			result.Data.Should().HaveCount(pageSize);
 		}
 	}
 
@@ -90,11 +205,9 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 		}
 
 		[Fact]
-		public void OffsetPaginate_InMemory()
+		public void OffsetPaginate()
 		{
-			var orders = Enumerable.Range(1, 5)
-				.Select(x => new Order { Id = x })
-				.ToList();
+			var orders = CreateOrders(5);
 
 			var result = Service.OffsetPaginate(
 				orders,
@@ -103,6 +216,19 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 			result.Data.Should().HaveCount(2);
 			GetData(result)[0].Id.Should().Be(3);
 			GetData(result)[1].Id.Should().Be(4);
+		}
+
+		[Fact]
+		public void OffsetPaginate_ActualSizeLessThanPageSize()
+		{
+			var orders = CreateOrders(5);
+
+			var result = Service.OffsetPaginate(
+				orders,
+				pageSize: 4);
+
+			result.Data.Should().HaveCount(1);
+			GetData(result)[0].Id.Should().Be(5);
 		}
 	}
 }
