@@ -351,6 +351,15 @@ public class PaginationService : IPaginationService
 			}
 		}
 
+		if (model.Size <= 0)
+		{
+			model.Size = _options.DefaultSize;
+		}
+		if (model.Size > _options.MaxSize)
+		{
+			model.Size = _options.MaxSize;
+		}
+
 		return model;
 	}
 

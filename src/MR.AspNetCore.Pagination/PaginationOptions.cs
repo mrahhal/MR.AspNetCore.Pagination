@@ -42,7 +42,7 @@ public class PaginationOptions
 	public int DefaultSize { get; set; } = 20;
 
 	/// <summary>
-	/// Gets or sets the maximum page size that can be specified. Should throw if this size is exceeded.
+	/// Gets or sets the maximum page size that can be specified. Size will be capped to this.
 	/// Defaults to 100.
 	/// </summary>
 	public int MaxSize { get; set; } = 100;
