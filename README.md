@@ -34,7 +34,7 @@ Add pagination services:
 services.AddPagination();
 ```
 
-You can configure options:
+You can configure some default options:
 
 ```cs
 services.AddPagination(options =>
