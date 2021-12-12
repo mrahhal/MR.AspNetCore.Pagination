@@ -96,6 +96,18 @@ var usersPaginationResult = await _paginationService.OffsetPaginateAsync(
     query => query.Select(x => new UserDto(...)));
 ```
 
+There's additional support for doing an offset pagination over in memory list of data:
+
+```cs
+// Assume we have an in memory list of orders.
+var orders = new List<Order>();
+
+// This does efficient offset pagination over the orders list.
+var result = _paginationService.OffsetPaginate(orders);
+```
+
+There's a helper `PaginationActionDetector` class that can be used with reflection, for example in ASP.NET Core conventions, which can tell you whether the action method returns a pagination result or not. This is what the MR.AspNetCore.Pagination.Swashbuckle package uses to configure swagger for those apis.
+
 ## MR.AspNetCore.Pagination.Swashbuckle
 
 [![NuGet version](https://badge.fury.io/nu/MR.AspNetCore.Pagination.Swashbuckle.svg)](https://www.nuget.org/packages/MR.AspNetCore.Pagination.Swashbuckle)
@@ -111,7 +123,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     // ...
 
-    c.AddPaginationOperationFilter();
+    c.ConfigurePagination();
 });
 ```
 
