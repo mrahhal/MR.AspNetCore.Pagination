@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param (
 	[ValidateSet('info', 'build', 'test', 'pack', 'tag-version')]
-	[string]$Script = 'info'
+	[string]$Script = 'info',
+	[switch]$HideBuildInfo = $false
 )
 
 function WriteInfo([string] $text) {
@@ -166,7 +167,9 @@ function PackProjects {
 
 $buildInfo = LoadBuildInfo
 
-PrintBuildInfo
+if (!$HideBuildInfo) {
+	PrintBuildInfo
+}
 
 if ($Script -eq 'build') {
 	RestoreProjects
