@@ -2,7 +2,7 @@
 param (
 	[ValidateSet('info', 'build', 'test', 'pack', 'tag-version')]
 	[string]$Script = 'info',
-	[switch]$HideBuildInfo = $false
+	[switch]$NoBuildInfo = $false
 )
 
 function WriteInfo([string] $text) {
@@ -114,20 +114,11 @@ function TagVersion() {
 	git tag -m $tag $tag
 }
 
-function RestoreProjects() {
-	WriteHeader 'Restoring'
-
-	foreach ($project in $buildInfo.AllProjects) {
-		dotnet restore $project
-	}
-	ExitIfFailed
-}
-
 function BuildProjects() {
 	WriteHeader 'Building'
 
 	foreach ($srcProject in $buildInfo.SrcProjects) {
-		dotnet build $srcProject --no-restore -c Release
+		dotnet build $srcProject -c Release
 	}
 	ExitIfFailed
 }
@@ -141,7 +132,7 @@ function TestProjects() {
 	}
 
 	foreach ($testProject in $buildInfo.TestProjects) {
-		Invoke-Expression "dotnet test $testProject --no-restore -c Release $testLoggersArg"
+		Invoke-Expression "dotnet test $testProject -c Release $testLoggersArg"
 	}
 	ExitIfFailed
 }
@@ -158,7 +149,7 @@ function PackProjects {
 	}
 
 	foreach ($srcProject in $buildInfo.SrcProjects) {
-		Invoke-Expression "dotnet pack $srcProject --no-restore -c Release -o artifacts/packages $versionSuffixArg"
+		Invoke-Expression "dotnet pack $srcProject -c Release -o artifacts/packages $versionSuffixArg"
 	}
 	ExitIfFailed
 }
@@ -167,22 +158,19 @@ function PackProjects {
 
 $buildInfo = LoadBuildInfo
 
-if (!$HideBuildInfo) {
+if (!$NoBuildInfo) {
 	PrintBuildInfo
 }
 
 if ($Script -eq 'build') {
-	RestoreProjects
 	BuildProjects
 }
 
 if ($Script -eq 'test') {
-	RestoreProjects
 	TestProjects
 }
 
 if ($Script -eq 'pack') {
-	RestoreProjects
 	PackProjects
 }
 
