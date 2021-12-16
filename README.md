@@ -6,13 +6,15 @@
 
 Pagination for ASP.NET Core.
 
-Supports both offset and keyset pagination over `IQueryable` for Entity Framework Core.
+Supports both offset and keyset pagination for Entity Framework Core.
+
+This package provides an easy to use service that auto reads pagination related params from the query string of the request to paginate EF Core data.
 
 Keyset pagination support uses [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination).
 
 ## Offset vs Keyset
 
-Keyset pagination (also known as cursor/seek pagination) is much more efficient and has stable performance over large sizes of data, but it's harder to work with than offset pagination.
+Keyset pagination (also known as cursor/seek pagination) is much more efficient and has stable performance over large amounts of data, but it's harder to work with than offset pagination.
 
 |                        | Offset                                                        | Keyset                                              |
 | ---------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
@@ -44,7 +46,7 @@ services.AddPagination(options =>
 });
 ```
 
-Check the `PaginationOptions` class to see what you can configure.
+Check the [`PaginationOptions`](https://github.com/mrahhal/MR.AspNetCore.Pagination/blob/main/src/MR.AspNetCore.Pagination/PaginationOptions.cs) class to see what you can configure.
 
 And then just inject `IPaginationService` in your controller/page and use it.
 
@@ -56,6 +58,8 @@ var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
     b => b.Descending(x => x.Created),
     async id => await _dbContext.Users.FindAsync(id));
 ```
+
+**Note:** Check [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more info about keyset pagination.
 
 Do a keyset pagination and map to dto:
 
