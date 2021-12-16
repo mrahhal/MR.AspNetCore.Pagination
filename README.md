@@ -26,17 +26,13 @@ We recommend keyset pagination over offset, unless you have specific requirement
 
 ## Usage
 
-## MR.AspNetCore.Pagination
-
-[![NuGet version](https://badge.fury.io/nu/MR.AspNetCore.Pagination.svg)](https://www.nuget.org/packages/MR.AspNetCore.Pagination)
-
 Add pagination services:
 
 ```cs
 services.AddPagination();
 ```
 
-You can configure some default options:
+You can configure some default options here:
 
 ```cs
 services.AddPagination(options =>
@@ -48,7 +44,7 @@ services.AddPagination(options =>
 
 Check the [`PaginationOptions`](https://github.com/mrahhal/MR.AspNetCore.Pagination/blob/main/src/MR.AspNetCore.Pagination/PaginationOptions.cs) class to see what you can configure.
 
-And then just inject `IPaginationService` in your controller/page and use it.
+And then just inject `IPaginationService` in your controller/page and use it. The [returned result](https://github.com/mrahhal/MR.AspNetCore.Pagination/blob/main/src/MR.AspNetCore.Pagination/PaginationResult.cs) is either a `KeysetPaginationResult<>` or an `OffsetPaginationResult<>`, each containing all the info you need for this pagination result. 
 
 Do a keyset pagination:
 
