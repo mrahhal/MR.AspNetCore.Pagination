@@ -13,7 +13,11 @@ _Nothing yet_
 
 ## 1.0.1 - 2022-02-18
 
+https://github.com/mrahhal/MR.AspNetCore.Pagination/releases/tag/v1.0.1
+
 - Update MR.EntityFrameworkCore.KeysetPagination dependency.
+
+**Full Changelog**: https://github.com/mrahhal/MR.AspNetCore.Pagination/compare/v1.0.0...v1.0.1
 
 ## 1.0.0 - 2021-12-12
 
