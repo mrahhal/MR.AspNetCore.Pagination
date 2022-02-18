@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MR.EntityFrameworkCore.KeysetPagination" Version="1.0.0" />
+    <PackageReference Include="MR.EntityFrameworkCore.KeysetPagination" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
