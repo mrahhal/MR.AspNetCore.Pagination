@@ -19,10 +19,10 @@ Keyset pagination (also known as cursor/seek pagination) is much more efficient 
 |                        | Offset                                                        | Keyset                                              |
 | ---------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
 | Performance            | worse over large data                                         | stable over large data                              |
-| Duplicate/Skipped data | always possible if data gets updated between page navigations | guaranteed no duplication/skipping if used properly |
-| Pages                  | can jump between pages                                        | can only go to first/previous/next/last             |
+| Duplicate/Skipped data | always possible if data gets updated between page navigations | no duplication/skipping                             |
+| Pages                  | can access random pages                                       | can only go to first/previous/next/last             |
 
-We recommend keyset pagination over offset, unless you have specific requirements for wanting to show/navigate pages.
+We recommend keyset pagination over offset, unless you have a requirement for wanting to randomly access pages.
 
 ## Usage
 
