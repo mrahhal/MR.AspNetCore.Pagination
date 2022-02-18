@@ -63,6 +63,34 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 		}
 
 		[Fact]
+		public async Task KeysetPaginateAsync_WithNullableInKeyset()
+		{
+			var query = DbContext.Orders;
+
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				b => b.Ascending(o => o.Id).Descending(o => o.AnotherId),
+				async id => await DbContext.Orders.FindAsync(id));
+
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			result.Data.Should().HaveCount(defaultPageSize);
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync_WithNullableInKeyset2()
+		{
+			var query = DbContext.Orders;
+
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				b => b.Descending(o => o.AnotherId).Ascending(o => o.Id),
+				async id => await DbContext.Orders.FindAsync(id));
+
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			result.Data.Should().HaveCount(defaultPageSize);
+		}
+
+		[Fact]
 		public async Task OffsetPaginateAsync()
 		{
 			var query = DbContext.Orders;

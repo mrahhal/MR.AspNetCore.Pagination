@@ -66,6 +66,7 @@ public class DatabaseFixture : IDisposable
 			context.Orders.Add(new Order
 			{
 				Id = i,
+				AnotherId = i % 2 == 0 ? i : null,
 				Created = created,
 			});
 		}
