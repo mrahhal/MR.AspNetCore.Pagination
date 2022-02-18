@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 _Nothing yet_
 
+## 1.0.1 - 2022-02-18
+
+- Update MR.EntityFrameworkCore.KeysetPagination dependency.
+
 ## 1.0.0 - 2021-12-12
 
 https://github.com/mrahhal/MR.AspNetCore.Pagination/releases/tag/v1.0.0
