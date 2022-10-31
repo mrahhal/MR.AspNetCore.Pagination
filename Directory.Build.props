@@ -4,13 +4,11 @@
     <Product>MR.AspNetCore.Pagination</Product>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <RepositoryUrl>https://github.com/mrahhal/MR.AspNetCore.Pagination</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <Authors>Mohammad Rahhal</Authors>
-    <PackageProjectUrl>https://github.com/mrahhal/MR.AspNetCore.Pagination</PackageProjectUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
