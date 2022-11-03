@@ -10,7 +10,7 @@ Supports both offset and keyset pagination for Entity Framework Core.
 
 This package provides an easy to use service that auto reads pagination related params from the query string of the request to paginate EF Core data.
 
-Keyset pagination support uses [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination).
+Keyset pagination support uses [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination). Make sure to read its README for an overview.
 
 ## Offset vs Keyset
 
