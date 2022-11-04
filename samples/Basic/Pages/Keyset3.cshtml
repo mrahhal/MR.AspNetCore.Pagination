@@ -1,0 +1,26 @@
+﻿@page
+@model Keyset3Model
+
+<div class="text-center">
+    <div>Posts (Id is a Guid)</div>
+
+    <div class="posts">
+        @foreach (var post in Model.Posts.Data)
+        {
+            <div class="user">
+                @post.Name (@post.Created.ToLongDateString())
+            </div>
+        }
+    </div>
+
+    <div class="mt-3" style="text-align: center">
+        (@Model.Posts.TotalCount items)
+    </div>
+
+    <div class="pagination mt-3">
+        <a asp-page="/Keyset3" asp-route-first="@true" disabled="@(!Model.Posts.HasPrevious ? "disabled" : null)">First</a>
+        <a asp-page="/Keyset3" asp-route-before="@Model.Posts.Data.First().Id" disabled="@(!Model.Posts.HasPrevious ? "disabled" : null)">Previous</a>
+        <a asp-page="/Keyset3" asp-route-after="@Model.Posts.Data.Last().Id" disabled="@(!Model.Posts.HasNext ? "disabled" : null)">Next</a>
+        <a asp-page="/Keyset3" asp-route-last="@true" disabled="@(!Model.Posts.HasNext ? "disabled" : null)">Last</a>
+    </div>
+</div>

@@ -42,6 +42,7 @@ namespace Basic
 				_dbContext.Database.EnsureDeleted();
 				_dbContext.Database.EnsureCreated();
 				var users = new List<User>(capacity: dataCountToAdd);
+				var posts = new List<Post>(capacity: dataCountToAdd);
 
 				var now = DateTime.Now.AddYears(-1);
 				for (var i = 1; i <= dataCountToAdd; i++)
@@ -53,8 +54,14 @@ namespace Basic
 						Name = i.ToString(),
 						Created = created,
 					});
+					posts.Add(new Post
+					{
+						Name = i.ToString(),
+						Created = created,
+					});
 				}
 				_dbContext.AddRange(users);
+				_dbContext.AddRange(posts);
 				_dbContext.SaveChanges();
 
 				Console.WriteLine($"Added {dataCountToAdd} rows.");
