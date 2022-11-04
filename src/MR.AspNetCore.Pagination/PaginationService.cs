@@ -17,8 +17,8 @@ public interface IPaginationService
 	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
 	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
-	/// <param name="getReferenceAsync">A func that gets the reference by id.</param>
-	/// <param name="map">A func that decorates the source to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
 	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The keyset pagination result.</returns>
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
@@ -36,7 +36,7 @@ public interface IPaginationService
 	/// <typeparam name="T">The type of the entity.</typeparam>
 	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
 	/// <param name="source">The queryable source.</param>
-	/// <param name="map">A func that decorates the source to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
 	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The offset pagination result.</returns>
 	Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
@@ -75,7 +75,7 @@ public static class PaginationServiceExtensions
 	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
 	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
-	/// <param name="getReferenceAsync">A func that gets the reference by id.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
 	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
 	/// <returns>The keyset pagination result.</returns>
 	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
