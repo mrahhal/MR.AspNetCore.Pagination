@@ -4,7 +4,8 @@ using System.Reflection;
 namespace MR.AspNetCore.Pagination;
 
 /// <summary>
-/// Includes reflection helpers to detect methods that return pagination results.
+/// Includes reflection helpers used to detect if a method returns a pagination result,
+/// unwrapping things like Tasks and AspNetCore's types such as ActionResult.
 /// </summary>
 public static class PaginationActionDetector
 {
@@ -13,7 +14,7 @@ public static class PaginationActionDetector
 	/// Unwraps Tasks and ActionResults.
 	/// </summary>
 	/// <param name="methodInfo">The method to inspect.</param>
-	/// <param name="type">The <see cref="Type"/> of the pagination result.</param>
+	/// <param name="type">The <see cref="Type"/> of the pagination result's data.</param>
 	public static bool IsPaginationResultAction(MethodInfo methodInfo, [NotNullWhen(true)] out Type? type)
 	{
 		return IsKeysetPaginationResultAction(methodInfo, out type)
@@ -25,7 +26,7 @@ public static class PaginationActionDetector
 	/// Unwraps Tasks and ActionResults.
 	/// </summary>
 	/// <param name="methodInfo">The method to inspect.</param>
-	/// <param name="type">The <see cref="Type"/> of the pagination result.</param>
+	/// <param name="type">The <see cref="Type"/> of the pagination result's data.</param>
 	public static bool IsKeysetPaginationResultAction(MethodInfo methodInfo, [NotNullWhen(true)] out Type? type)
 	{
 		return IsPaginationResultAction(
@@ -39,7 +40,7 @@ public static class PaginationActionDetector
 	/// Unwraps Tasks and ActionResults.
 	/// </summary>
 	/// <param name="methodInfo">The method to inspect.</param>
-	/// <param name="type">The <see cref="Type"/> of the pagination result.</param>
+	/// <param name="type">The <see cref="Type"/> of the pagination result's data.</param>
 	public static bool IsOffsetPaginationResultAction(MethodInfo methodInfo, [NotNullWhen(true)] out Type? type)
 	{
 		return IsPaginationResultAction(
@@ -58,18 +59,18 @@ public static class PaginationActionDetector
 		var targetType = methodInfo.ReturnType;
 		if (!targetType.IsGenericType) return false;
 
+		// Unwrap Tasks
 		if (targetType.GetGenericTypeDefinition() == typeof(Task<>))
 		{
 			targetType = targetType.GetGenericArguments()[0];
 		}
-
 		if (!targetType.IsGenericType) return false;
 
+		// Unwrap ActionResults
 		if (targetType.GetGenericTypeDefinition().Name == "ActionResult`1")
 		{
 			targetType = targetType.GetGenericArguments()[0];
 		}
-
 		if (!targetType.IsGenericType) return false;
 
 		if (targetType.GetGenericTypeDefinition() == paginationResultType)

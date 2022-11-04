@@ -1,7 +1,7 @@
 ﻿namespace MR.AspNetCore.Pagination;
 
 /// <summary>
-/// Represents the result of the keyset pagination.
+/// Represents the result of a keyset pagination.
 /// </summary>
 /// <typeparam name="T">The type of the data list item.</typeparam>
 /// <param name="Data">The data list.</param>
@@ -17,7 +17,7 @@ public record KeysetPaginationResult<T>(
 	bool HasNext);
 
 /// <summary>
-/// Represents the result of the offset pagination.
+/// Represents the result of an offset pagination.
 /// </summary>
 /// <typeparam name="T">The type of the data list item.</typeparam>
 /// <param name="Data">The data list.</param>
