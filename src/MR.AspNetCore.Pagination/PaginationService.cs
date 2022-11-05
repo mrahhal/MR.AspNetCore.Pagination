@@ -342,7 +342,11 @@ public class PaginationService : IPaginationService
 
 		var data = await query.ApplyMapper(map).ToListAsync();
 
-		return new OffsetPaginationResult<TOut>(data, totalCount, pageSize, page);
+		return CreateOffsetPaginationResult(
+			data,
+			totalCount,
+			pageSize,
+			page);
 	}
 
 	/// <inheritdoc/>
@@ -380,7 +384,7 @@ public class PaginationService : IPaginationService
 			.Select(x => map(x))
 			.ToList();
 
-		return new OffsetPaginationResult<TOut>(
+		return CreateOffsetPaginationResult(
 			data,
 			totalCount,
 			pageSize,
@@ -399,6 +403,22 @@ public class PaginationService : IPaginationService
 			_httpContext.Request.Query,
 			pageSize);
 		return OffsetPaginate(source, map, queryModel);
+	}
+
+	private OffsetPaginationResult<T> CreateOffsetPaginationResult<T>(
+		IReadOnlyList<T> data,
+		int totalCount,
+		int pageSize,
+		int page)
+	{
+		var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+
+		return new OffsetPaginationResult<T>(
+			data,
+			totalCount,
+			pageSize,
+			page,
+			pageCount);
 	}
 
 	private IEnumerable<T> Page<T>(IReadOnlyList<T> source, int page, int pageSize)

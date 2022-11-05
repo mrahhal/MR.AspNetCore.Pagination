@@ -19,7 +19,7 @@
 
     <div class="pagination mt-3">
         @{
-            var lastPage = Model.Users.TotalCount / Model.Users.PageSize + 1;
+            var lastPage = Model.Users.PageCount;
             var currentPage = Model.Users.Page;
             var hasNext = currentPage < lastPage;
             var hasPrevious = currentPage > 1;

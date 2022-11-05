@@ -14,6 +14,7 @@ This version introduces breaking changes. Make sure to read on them in the Chang
 ### Added
 
 - Add overloads that accept the query model as an argument as opposed to being parsed from the request query ([#3](https://github.com/mrahhal/MR.AspNetCore.Pagination/issues/3))
+- Add `PageCount`, a commonly computed value to `OffsetPaginationResult`
 
 ### Changed
 

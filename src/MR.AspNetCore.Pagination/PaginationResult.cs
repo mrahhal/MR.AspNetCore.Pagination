@@ -24,8 +24,10 @@ public record KeysetPaginationResult<T>(
 /// <param name="TotalCount">The total count of the data.</param>
 /// <param name="PageSize">The size of the page. This can be different from the actual size of <see cref="Data"/>.</param>
 /// <param name="Page">The page number of this result.</param>
+/// <param name="PageCount">The total number of pages.</param>
 public record OffsetPaginationResult<T>(
 	IReadOnlyList<T> Data,
 	int TotalCount,
 	int PageSize,
-	int Page);
+	int Page,
+	int PageCount);
