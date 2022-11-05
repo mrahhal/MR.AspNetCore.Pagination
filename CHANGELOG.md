@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 [**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.1...HEAD)
 
+This version introduces breaking changes. Make sure to read on them in the Changed section below.
+
+### Changed
+
+- Remove auto parsing of ints for after/before params ([#5](https://github.com/mrahhal/MR.AspNetCore.Pagination/issues/5))
+
 ### Other
 
 - Update MR.EntityFrameworkCore.KeysetPagination dependency

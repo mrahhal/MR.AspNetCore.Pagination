@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Basic.Dtos;
-using Basic.Models;
+﻿using Basic.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MR.AspNetCore.Pagination;
 
@@ -11,16 +8,13 @@ namespace Basic.Pages
 	{
 		private readonly AppDbContext _dbContext;
 		private readonly IPaginationService _paginationService;
-		private readonly IMapper _mapper;
 
 		public Keyset3Model(
 			AppDbContext dbContext,
-			IPaginationService paginationService,
-			IMapper mapper)
+			IPaginationService paginationService)
 		{
 			_dbContext = dbContext;
 			_paginationService = paginationService;
-			_mapper = mapper;
 		}
 
 		public KeysetPaginationResult<Post> Posts { get; set; }

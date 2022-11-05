@@ -56,7 +56,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 			var result = await Service.KeysetPaginateAsync(
 				query,
 				b => b.Ascending(o => o.Id),
-				async id => await DbContext.Orders.FindAsync(id));
+				async id => await DbContext.Orders.FindAsync(int.Parse(id)));
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
 			result.Data.Should().HaveCount(defaultPageSize);
@@ -101,7 +101,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 			var result = await Service.KeysetPaginateAsync(
 				query,
 				b => b.Ascending(o => o.Id),
-				async id => await DbContext.Orders.FindAsync(id),
+				async id => await DbContext.Orders.FindAsync(int.Parse(id)),
 				query => query.Select(x => new OrderDto { Id = x.Id }));
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;
@@ -153,7 +153,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 			var result = await Service.KeysetPaginateAsync(
 				query,
 				b => b.Ascending(o => o.Id),
-				async id => await DbContext.Orders.FindAsync(id),
+				async id => await DbContext.Orders.FindAsync(int.Parse(id)),
 				pageSize);
 
 			result.Data.Should().HaveCount(pageSize);
@@ -225,6 +225,48 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			result.Data.Should().HaveCount(1);
 			result.Data[0].Id.Should().Be(5);
+		}
+	}
+
+	public class After : PaginationServiceTest
+	{
+		public After(DatabaseFixture fixture) : base(fixture)
+		{
+		}
+
+		protected override IQueryCollection CreateQuery()
+		{
+			var query = new QueryCollection(new Dictionary<string, StringValues>
+			{
+				[new PaginationOptions().AfterQueryParameterName] = 1.ToString(),
+			});
+
+			return query;
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync()
+		{
+			var query = DbContext.Orders;
+
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				b => b.Ascending(o => o.Id),
+				async id => await DbContext.Orders.FindAsync(int.Parse(id)));
+
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			result.Data.Should().HaveCount(defaultPageSize);
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync_NoProperParsing_Throws()
+		{
+			var query = DbContext.Orders;
+
+			await Assert.ThrowsAnyAsync<Exception>(async () => await Service.KeysetPaginateAsync(
+				query,
+				b => b.Ascending(o => o.Id),
+				async id => await DbContext.Orders.FindAsync(id)));
 		}
 	}
 }

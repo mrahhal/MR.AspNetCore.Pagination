@@ -32,7 +32,7 @@ namespace Basic.Pages
 			Users = await _paginationService.KeysetPaginateAsync(
 				query,
 				b => b.Descending(x => x.Created),
-				async id => await _dbContext.Users.FindAsync(id),
+				async id => await _dbContext.Users.FindAsync(int.Parse(id)),
 				query => query.ProjectTo<UserDto>(_mapper.ConfigurationProvider));
 		}
 	}

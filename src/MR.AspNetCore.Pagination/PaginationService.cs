@@ -24,7 +24,7 @@ public interface IPaginationService
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<object, Task<T>> getReferenceAsync,
+		Func<string, Task<T>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		int? pageSize = null)
 		where T : class
@@ -82,7 +82,7 @@ public static class PaginationServiceExtensions
 		this IPaginationService @this,
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<object, Task<T>> getReferenceAsync,
+		Func<string, Task<T>> getReferenceAsync,
 		int? pageSize = null)
 		where T : class
 		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, pageSize);
@@ -141,7 +141,7 @@ public class PaginationService : IPaginationService
 	public async Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<object, Task<T>> getReferenceAsync,
+		Func<string, Task<T>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		int? pageSize = null)
 		where T : class
@@ -304,28 +304,12 @@ public class PaginationService : IPaginationService
 
 		if (requestQuery.ContainsKey(_options.BeforeQueryParameterName))
 		{
-			var before = requestQuery[_options.BeforeQueryParameterName][0];
-			if (int.TryParse(before, out var beforeIntValue))
-			{
-				model.Before = beforeIntValue;
-			}
-			else
-			{
-				model.Before = before;
-			}
+			model.Before = requestQuery[_options.BeforeQueryParameterName][0];
 		}
 
 		if (requestQuery.ContainsKey(_options.AfterQueryParameterName))
 		{
-			var after = requestQuery[_options.AfterQueryParameterName][0];
-			if (int.TryParse(after, out var afterIntValue))
-			{
-				model.After = afterIntValue;
-			}
-			else
-			{
-				model.After = after;
-			}
+			model.After = requestQuery[_options.AfterQueryParameterName][0];
 		}
 
 		if (requestQuery.ContainsKey(_options.LastQueryParameterName))
@@ -402,9 +386,9 @@ public class PaginationService : IPaginationService
 	{
 		public bool First { get; set; }
 
-		public object? Before { get; set; }
+		public string? Before { get; set; }
 
-		public object? After { get; set; }
+		public string? After { get; set; }
 
 		public bool Last { get; set; }
 	}

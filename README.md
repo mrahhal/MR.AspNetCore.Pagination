@@ -52,8 +52,10 @@ Do a keyset pagination:
 var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
     _dbContext.Users,
     b => b.Descending(x => x.Created),
-    async id => await _dbContext.Users.FindAsync(id));
+    async id => await _dbContext.Users.FindAsync(int.Parse(id)));
 ```
+
+`id` above will always be a string, so make sure to pares it to your entity's id type.
 
 **Note:** Check [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more info about keyset pagination.
 
@@ -64,14 +66,14 @@ Do a keyset pagination and map to dto:
 var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
     _dbContext.Users,
     b => b.Descending(x => x.Created),
-    async id => await _dbContext.Users.FindAsync(id),
+    async id => await _dbContext.Users.FindAsync(int.Parse(id)),
     query => query.ProjectTo<UserDto>(_mapper.ConfigurationProvider));
 
 // Using manual select:
 var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
     _dbContext.Users,
     b => b.Descending(x => x.Created),
-    async id => await _dbContext.Users.FindAsync(id),
+    async id => await _dbContext.Users.FindAsync(int.Parse(id)),
     query => query.Select(user => new UserDto(...)));
 ```
 
