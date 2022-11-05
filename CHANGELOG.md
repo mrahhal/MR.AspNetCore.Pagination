@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.0.0 - 2022-11-05
 
-[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.1...2.0.0)
-
 This version introduces breaking changes. Make sure to read on them in the Changed section below.
 
 ### Fixed
@@ -29,17 +27,19 @@ This version introduces breaking changes. Make sure to read on them in the Chang
 
 - Update MR.EntityFrameworkCore.KeysetPagination dependency
 
-## 1.0.1 - 2022-02-18
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.1...2.0.0)
 
-[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.0...v1.0.1)
+## 1.0.1 - 2022-02-18
 
 - Update MR.EntityFrameworkCore.KeysetPagination dependency
 
-## 1.0.0 - 2021-12-12
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.0...v1.0.1)
 
-[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v0.1.0...v1.0.0)
+## 1.0.0 - 2021-12-12
 
 - Move `PaginationActionDetector` to main package
 - Add `ConfigurePagination` for swagger and make `AddPaginationOperationFilter` obsolete
 - Add efficient offset pagination for in memory list of data
 - Allow overriding page size on the method call level
+
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v0.1.0...v1.0.0)
