@@ -18,6 +18,7 @@ This version introduces breaking changes. Make sure to read on them in the Chang
 ### Changed
 
 - Remove auto parsing of ints for after/before params ([#5](https://github.com/mrahhal/MR.AspNetCore.Pagination/issues/5))
+- Rename `SizeQueryParameterName` to `PageSizeQueryParameterName` (the default value remains `"size"`)
 
 ### Other
 

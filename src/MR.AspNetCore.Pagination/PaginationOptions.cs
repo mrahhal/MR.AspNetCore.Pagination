@@ -57,5 +57,5 @@ public class PaginationOptions
 	/// Gets or sets the query parameter name for page size.
 	/// Defaults to "size".
 	/// </summary>
-	public string SizeQueryParameterName { get; set; } = "size";
+	public string PageSizeQueryParameterName { get; set; } = "size";
 }

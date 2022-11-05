@@ -425,9 +425,9 @@ public class PaginationService : IPaginationService
 		}
 
 		var pageSizeFromQuery = default(int?);
-		if (_options.CanChangeSizeFromQuery && requestQuery.ContainsKey(_options.SizeQueryParameterName))
+		if (_options.CanChangeSizeFromQuery && requestQuery.ContainsKey(_options.PageSizeQueryParameterName))
 		{
-			var pageSizeString = requestQuery[_options.SizeQueryParameterName][0];
+			var pageSizeString = requestQuery[_options.PageSizeQueryParameterName][0];
 			pageSizeFromQuery = int.Parse(pageSizeString);
 
 			if (pageSizeFromQuery <= 0)
