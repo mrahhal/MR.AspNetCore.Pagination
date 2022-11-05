@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 This version introduces breaking changes. Make sure to read on them in the Changed section below.
 
+### Fixed
+
+- Enforce returning the first page when the reference is null in an after/before request
+
 ### Added
 
 - Add overloads that accept the query model as an argument as opposed to being parsed from the request query ([#3](https://github.com/mrahhal/MR.AspNetCore.Pagination/issues/3))
