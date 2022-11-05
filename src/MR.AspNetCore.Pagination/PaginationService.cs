@@ -264,38 +264,31 @@ public class PaginationService : IPaginationService
 		if (queryModel.Last)
 		{
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward);
-			data = await keysetContext.Query
-			  .Take(pageSize)
-			  .ApplyMapper(map)
-			  .ToListAsync();
 		}
 		else if (queryModel.After != null)
 		{
 			var reference = await getReferenceAsync(queryModel.After);
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward, reference);
-			data = await keysetContext.Query
-			  .Take(pageSize)
-			  .ApplyMapper(map)
-			  .ToListAsync();
 		}
 		else if (queryModel.Before != null)
 		{
 			var reference = await getReferenceAsync(queryModel.Before);
-			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward, reference);
-			data = await keysetContext.Query
-			  .Take(pageSize)
-			  .ApplyMapper(map)
-			  .ToListAsync();
+			// This is a special case.
+			// If reference is null (maybe the entity was deleted from the database), we want to
+			// always return the first page, so enforce a Forward direction.
+			var direction = reference != null ? KeysetPaginationDirection.Backward : KeysetPaginationDirection.Forward;
+			keysetContext = query.KeysetPaginate(builderAction, direction, reference);
 		}
 		else
 		{
 			// First page
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward);
-			data = await keysetContext.Query
-			  .Take(pageSize)
-			  .ApplyMapper(map)
-			  .ToListAsync();
 		}
+
+		data = await keysetContext.Query
+			.Take(pageSize)
+			.ApplyMapper(map)
+			.ToListAsync();
 
 		keysetContext.EnsureCorrectOrder(data);
 
