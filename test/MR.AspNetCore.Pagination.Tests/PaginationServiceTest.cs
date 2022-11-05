@@ -207,7 +207,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var result = Service.OffsetPaginate(
 				orders,
-				pageSize: 2);
+				size: 2);
 
 			result.Data.Should().HaveCount(2);
 			result.Data[0].Id.Should().Be(3);
@@ -221,7 +221,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var result = Service.OffsetPaginate(
 				orders,
-				pageSize: 4);
+				size: 4);
 
 			result.Data.Should().HaveCount(1);
 			result.Data[0].Id.Should().Be(5);
@@ -267,6 +267,31 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 				query,
 				b => b.Ascending(o => o.Id),
 				async id => await DbContext.Orders.FindAsync(id)));
+		}
+	}
+
+	public class ArgumentQueryModel : PaginationServiceTest
+	{
+		public ArgumentQueryModel(DatabaseFixture fixture) : base(fixture)
+		{
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync()
+		{
+			var query = DbContext.Orders;
+
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				b => b.Ascending(o => o.Id),
+				async id => await DbContext.Orders.FindAsync(int.Parse(id)),
+				queryModel: new KeysetQueryModel
+				{
+					First = true,
+					Size = 10,
+				});
+
+			result.Data.Should().HaveCount(10);
 		}
 	}
 }

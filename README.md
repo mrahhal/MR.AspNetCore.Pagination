@@ -110,6 +110,24 @@ var result = _paginationService.OffsetPaginate(orders);
 
 There's a helper `PaginationActionDetector` class that can be used with reflection, for example in ASP.NET Core conventions, which can tell you whether the action method returns a pagination result or not. This is what the MR.AspNetCore.Pagination.Swashbuckle package uses to configure swagger for those apis.
 
+## Query model as an argument
+
+All methods also have overloads that accept the pagination query model directly as an argument, as opposed to parsing it from the request query.
+
+```cs
+// Won't parse anything from the request's query.
+var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
+    _dbContext.Users,
+    b => b.Descending(x => x.Created),
+    async id => await _dbContext.Users.FindAsync(int.Parse(id)),
+    queryModel: new KeysetQueryModel
+    {
+        // Get the first page, with 10 items.
+        First = true,
+        Size = 10,
+    });
+```
+
 ## MR.AspNetCore.Pagination.Swashbuckle
 
 [![NuGet version](https://badge.fury.io/nu/MR.AspNetCore.Pagination.Swashbuckle.svg)](https://www.nuget.org/packages/MR.AspNetCore.Pagination.Swashbuckle)

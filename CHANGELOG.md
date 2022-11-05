@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 This version introduces breaking changes. Make sure to read on them in the Changed section below.
 
+### Added
+
+- Add overloads that accept the query model as an argument as opposed to being parsed from the request query ([#3](https://github.com/mrahhal/MR.AspNetCore.Pagination/issues/3))
+
 ### Changed
 
 - Remove auto parsing of ints for after/before params ([#5](https://github.com/mrahhal/MR.AspNetCore.Pagination/issues/5))

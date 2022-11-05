@@ -19,14 +19,34 @@ public interface IPaginationService
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
 	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
-	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <param name="queryModel">The pagination query model.</param>
 	/// <returns>The keyset pagination result.</returns>
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<string, Task<T>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
-		int? pageSize = null)
+		KeysetQueryModel queryModel)
+		where T : class
+		where TOut : class;
+
+	/// <summary>
+	/// Paginates data using keyset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="builderAction">An action that builds the keyset.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="size">The page size. This takes priority over all other sources.</param>
+	/// <returns>The keyset pagination result.</returns>
+	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Action<KeysetPaginationBuilder<T>> builderAction,
+		Func<string, Task<T>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? size = null)
 		where T : class
 		where TOut : class;
 
@@ -37,12 +57,28 @@ public interface IPaginationService
 	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
 	/// <param name="source">The queryable source.</param>
 	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
-	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <param name="queryModel">The pagination query model.</param>
 	/// <returns>The offset pagination result.</returns>
 	Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
-		int? pageSize = null)
+		OffsetQueryModel queryModel)
+		where T : class
+		where TOut : class;
+
+	/// <summary>
+	/// Paginates data using offset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="size">The page size. This takes priority over all other sources.</param>
+	/// <returns>The offset pagination result.</returns>
+	Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? size = null)
 		where T : class
 		where TOut : class;
 
@@ -53,12 +89,28 @@ public interface IPaginationService
 	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
 	/// <param name="source">The in memory data source.</param>
 	/// <param name="map">A func to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
-	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <param name="queryModel">The pagination query model.</param>
 	/// <returns>The offset pagination result.</returns>
 	OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
 		IReadOnlyList<T> source,
 		Func<T, TOut> map,
-		int? pageSize = null)
+		OffsetQueryModel queryModel)
+		where T : class
+		where TOut : class;
+
+	/// <summary>
+	/// Paginates in memory data using offset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The in memory data source.</param>
+	/// <param name="map">A func to map from <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="size">The page size. This takes priority over all other sources.</param>
+	/// <returns>The offset pagination result.</returns>
+	OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
+		IReadOnlyList<T> source,
+		Func<T, TOut> map,
+		int? size = null)
 		where T : class
 		where TOut : class;
 }
@@ -76,16 +128,35 @@ public static class PaginationServiceExtensions
 	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
-	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <param name="queryModel">The pagination query model.</param>
 	/// <returns>The keyset pagination result.</returns>
 	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
 		this IPaginationService @this,
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<string, Task<T>> getReferenceAsync,
-		int? pageSize = null)
+		KeysetQueryModel queryModel)
 		where T : class
-		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, pageSize);
+		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, queryModel);
+
+	/// <summary>
+	/// Paginates data using keyset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="builderAction">An action that builds the keyset.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="size">The page size. This takes priority over all other sources.</param>
+	/// <returns>The keyset pagination result.</returns>
+	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
+		this IPaginationService @this,
+		IQueryable<T> source,
+		Action<KeysetPaginationBuilder<T>> builderAction,
+		Func<string, Task<T>> getReferenceAsync,
+		int? size = null)
+		where T : class
+		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, size);
 
 	/// <summary>
 	/// Paginates data using offset pagination.
@@ -93,14 +164,29 @@ public static class PaginationServiceExtensions
 	/// <typeparam name="T">The type of the entity.</typeparam>
 	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
 	/// <param name="source">The queryable source.</param>
-	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <param name="queryModel">The pagination query model.</param>
 	/// <returns>The offset pagination result.</returns>
 	public static Task<OffsetPaginationResult<T>> OffsetPaginateAsync<T>(
 		this IPaginationService @this,
 		IQueryable<T> source,
-		int? pageSize = null)
+		OffsetQueryModel queryModel)
 		where T : class
-		=> @this.OffsetPaginateAsync(source, query => query, pageSize);
+		=> @this.OffsetPaginateAsync(source, query => query, queryModel);
+
+	/// <summary>
+	/// Paginates data using offset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="size">The page size. This takes priority over all other sources.</param>
+	/// <returns>The offset pagination result.</returns>
+	public static Task<OffsetPaginationResult<T>> OffsetPaginateAsync<T>(
+		this IPaginationService @this,
+		IQueryable<T> source,
+		int? size = null)
+		where T : class
+		=> @this.OffsetPaginateAsync(source, query => query, size);
 
 	/// <summary>
 	/// Paginates in memory data using offset pagination.
@@ -108,14 +194,29 @@ public static class PaginationServiceExtensions
 	/// <typeparam name="T">The type of the entity.</typeparam>
 	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
 	/// <param name="source">The in memory data source.</param>
-	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <param name="queryModel">The pagination query model.</param>
 	/// <returns>The offset pagination result.</returns>
 	public static OffsetPaginationResult<T> OffsetPaginate<T>(
 		this IPaginationService @this,
 		IReadOnlyList<T> source,
-		int? pageSize = null)
+		OffsetQueryModel queryModel)
 		where T : class
-		=> @this.OffsetPaginate(source, x => x, pageSize);
+		=> @this.OffsetPaginate(source, x => x, queryModel);
+
+	/// <summary>
+	/// Paginates in memory data using offset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The in memory data source.</param>
+	/// <param name="size">The page size. This takes priority over all other sources.</param>
+	/// <returns>The offset pagination result.</returns>
+	public static OffsetPaginationResult<T> OffsetPaginate<T>(
+		this IPaginationService @this,
+		IReadOnlyList<T> source,
+		int? size = null)
+		where T : class
+		=> @this.OffsetPaginate(source, x => x, size);
 }
 
 /// <summary>
@@ -143,7 +244,7 @@ public class PaginationService : IPaginationService
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<string, Task<T>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
-		int? pageSize = null)
+		KeysetQueryModel queryModel)
 		where T : class
 		where TOut : class
 	{
@@ -152,16 +253,15 @@ public class PaginationService : IPaginationService
 		if (getReferenceAsync == null) throw new ArgumentNullException(nameof(getReferenceAsync));
 		if (map == null) throw new ArgumentNullException(nameof(map));
 
-		var model = ParseKeysetQueryModel(_httpContext.Request.Query);
 		var query = source;
-		var size = ResolvePageSize(model, pageSize);
+		var size = queryModel.Size ?? _options.DefaultSize;
 
 		var totalCount = await query.CountAsync();
 
 		var data = default(List<TOut>);
 		KeysetPaginationContext<T> keysetContext;
 
-		if (model.Last)
+		if (queryModel.Last)
 		{
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward);
 			data = await keysetContext.Query
@@ -169,18 +269,18 @@ public class PaginationService : IPaginationService
 			  .ApplyMapper(map)
 			  .ToListAsync();
 		}
-		else if (model.After != null)
+		else if (queryModel.After != null)
 		{
-			var reference = await getReferenceAsync(model.After);
+			var reference = await getReferenceAsync(queryModel.After);
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward, reference);
 			data = await keysetContext.Query
 			  .Take(size)
 			  .ApplyMapper(map)
 			  .ToListAsync();
 		}
-		else if (model.Before != null)
+		else if (queryModel.Before != null)
 		{
-			var reference = await getReferenceAsync(model.Before);
+			var reference = await getReferenceAsync(queryModel.Before);
 			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward, reference);
 			data = await keysetContext.Query
 			  .Take(size)
@@ -206,25 +306,35 @@ public class PaginationService : IPaginationService
 	}
 
 	/// <inheritdoc/>
+	public Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Action<KeysetPaginationBuilder<T>> builderAction,
+		Func<string, Task<T>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize = null)
+		where T : class
+		where TOut : class
+	{
+		var queryModel = ParseKeysetQueryModel(
+			_httpContext.Request.Query,
+			pageSize);
+		return KeysetPaginateAsync(source, builderAction, getReferenceAsync, map, queryModel);
+	}
+
+	/// <inheritdoc/>
 	public async Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
-		int? pageSize = null)
+		OffsetQueryModel queryModel)
 		where T : class
 		where TOut : class
 	{
 		if (source == null) throw new ArgumentNullException(nameof(source));
 		if (map == null) throw new ArgumentNullException(nameof(map));
 
-		var model = ParseOffsetQueryModel(_httpContext.Request.Query);
 		var query = source;
-		var size = ResolvePageSize(model, pageSize);
-		var page = model.Page;
-		if (page < 1)
-		{
-			// Guard against invalid page values by returning 1st page.
-			page = 1;
-		}
+		var size = queryModel.Size ?? _options.DefaultSize;
+		var page = queryModel.Page;
 
 		var totalCount = await query.CountAsync();
 
@@ -236,19 +346,32 @@ public class PaginationService : IPaginationService
 	}
 
 	/// <inheritdoc/>
+	public Task<OffsetPaginationResult<TOut>> OffsetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize = null)
+		where T : class
+		where TOut : class
+	{
+		var queryModel = ParseOffsetQueryModel(
+			_httpContext.Request.Query,
+			pageSize);
+		return OffsetPaginateAsync(source, map, queryModel);
+	}
+
+	/// <inheritdoc/>
 	public OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
 		IReadOnlyList<T> source,
 		Func<T, TOut> map,
-		int? pageSize = null)
+		OffsetQueryModel queryModel)
 		where T : class
 		where TOut : class
 	{
 		if (source == null) throw new ArgumentNullException(nameof(source));
 		if (map == null) throw new ArgumentNullException(nameof(map));
 
-		var model = ParseOffsetQueryModel(_httpContext.Request.Query);
-		var size = ResolvePageSize(model, pageSize);
-		var page = model.Page;
+		var size = queryModel.Size ?? _options.DefaultSize;
+		var page = queryModel.Page;
 
 		var totalCount = source.Count;
 		var pageCount = (int)Math.Ceiling((double)totalCount / size);
@@ -262,6 +385,20 @@ public class PaginationService : IPaginationService
 			totalCount,
 			size,
 			page);
+	}
+
+	/// <inheritdoc/>
+	public OffsetPaginationResult<TOut> OffsetPaginate<T, TOut>(
+		IReadOnlyList<T> source,
+		Func<T, TOut> map,
+		int? pageSize = null)
+		where T : class
+		where TOut : class
+	{
+		var queryModel = ParseOffsetQueryModel(
+			_httpContext.Request.Query,
+			pageSize);
+		return OffsetPaginate(source, map, queryModel);
 	}
 
 	private IEnumerable<T> Page<T>(IReadOnlyList<T> source, int page, int pageSize)
@@ -278,19 +415,42 @@ public class PaginationService : IPaginationService
 		return data;
 	}
 
-	private int ResolvePageSize(QueryModelBase model, int? argumentPageSize)
+	private int? ResolveSize(
+		IQueryCollection requestQuery,
+		int? argumentPageSize)
 	{
-		if (argumentPageSize.HasValue) return argumentPageSize.Value;
+		if (argumentPageSize.HasValue)
+		{
+			return argumentPageSize;
+		}
 
-		if (model.Size != null) return model.Size.Value;
-		return _options.DefaultSize;
+		var sizeFromQuery = default(int?);
+		if (_options.CanChangeSizeFromQuery && requestQuery.ContainsKey(_options.SizeQueryParameterName))
+		{
+			var sizeString = requestQuery[_options.SizeQueryParameterName][0];
+			sizeFromQuery = int.Parse(sizeString);
+
+			if (sizeFromQuery <= 0)
+			{
+				sizeFromQuery = _options.DefaultSize;
+			}
+			if (sizeFromQuery > _options.MaxSize)
+			{
+				sizeFromQuery = _options.MaxSize;
+			}
+		}
+
+		return sizeFromQuery;
 	}
 
-	private KeysetQueryModel ParseKeysetQueryModel(IQueryCollection requestQuery)
+	private KeysetQueryModel ParseKeysetQueryModel(
+		IQueryCollection requestQuery,
+		int? argumentSize)
 	{
-		var model = new KeysetQueryModel();
-
-		ParseIntoQueryModelBase(requestQuery, model);
+		var model = new KeysetQueryModel
+		{
+			Size = ResolveSize(requestQuery, argumentSize),
+		};
 
 		if (requestQuery.ContainsKey(_options.FirstQueryParameterName))
 		{
@@ -322,36 +482,17 @@ public class PaginationService : IPaginationService
 			model.Last = lastBoolean;
 		}
 
-		if (_options.CanChangeSizeFromQuery && requestQuery.ContainsKey(_options.SizeQueryParameterName))
-		{
-			var size = requestQuery[_options.SizeQueryParameterName][0];
-			if (int.TryParse(size, out var sizeIntValue))
-			{
-				model.Size = sizeIntValue;
-			}
-			else
-			{
-				model.Size = _options.DefaultSize;
-			}
-		}
-
-		if (model.Size <= 0)
-		{
-			model.Size = _options.DefaultSize;
-		}
-		if (model.Size > _options.MaxSize)
-		{
-			model.Size = _options.MaxSize;
-		}
-
 		return model;
 	}
 
-	private OffsetQueryModel ParseOffsetQueryModel(IQueryCollection requestQuery)
+	private OffsetQueryModel ParseOffsetQueryModel(
+		IQueryCollection requestQuery,
+		int? argumentSize)
 	{
-		var model = new OffsetQueryModel();
-
-		ParseIntoQueryModelBase(requestQuery, model);
+		var model = new OffsetQueryModel
+		{
+			Size = ResolveSize(requestQuery, argumentSize),
+		};
 
 		if (requestQuery.ContainsKey(_options.PageQueryParameterName))
 		{
@@ -360,41 +501,14 @@ public class PaginationService : IPaginationService
 			{
 				model.Page = pageIntValue;
 			}
+
+			if (model.Page < 1)
+			{
+				// Guard against invalid page values by returning 1st page.
+				model.Page = 1;
+			}
 		}
 
 		return model;
-	}
-
-	private void ParseIntoQueryModelBase(IQueryCollection requestQuery, QueryModelBase model)
-	{
-		if (_options.CanChangeSizeFromQuery && requestQuery.ContainsKey(_options.SizeQueryParameterName))
-		{
-			var size = requestQuery[_options.SizeQueryParameterName][0];
-			if (int.TryParse(size, out var sizeIntValue))
-			{
-				model.Size = sizeIntValue;
-			}
-		}
-	}
-
-	private abstract class QueryModelBase
-	{
-		public int? Size { get; set; }
-	}
-
-	private class KeysetQueryModel : QueryModelBase
-	{
-		public bool First { get; set; }
-
-		public string? Before { get; set; }
-
-		public string? After { get; set; }
-
-		public bool Last { get; set; }
-	}
-
-	private class OffsetQueryModel : QueryModelBase
-	{
-		public int Page { get; set; } = 1;
 	}
 }
