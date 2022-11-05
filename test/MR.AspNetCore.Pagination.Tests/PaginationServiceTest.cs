@@ -207,7 +207,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var result = Service.OffsetPaginate(
 				orders,
-				size: 2);
+				pageSize: 2);
 
 			result.Data.Should().HaveCount(2);
 			result.Data[0].Id.Should().Be(3);
@@ -221,7 +221,7 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 
 			var result = Service.OffsetPaginate(
 				orders,
-				size: 4);
+				pageSize: 4);
 
 			result.Data.Should().HaveCount(1);
 			result.Data[0].Id.Should().Be(5);
