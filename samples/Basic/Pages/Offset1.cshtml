@@ -23,11 +23,11 @@
             var hasPrevious = currentPage > 1;
         }
         <a asp-page="/Offset1" asp-route-p="@(1)">1</a>
-        @if (hasPrevious)
+        @if (hasPrevious && currentPage - 1 != 1)
         {
             <a asp-page="/Offset1" asp-route-p="@(currentPage - 1)">@(currentPage - 1)</a>
         }
-        @if (hasNext)
+        @if (hasNext && currentPage + 1 != lastPage)
         {
             <a asp-page="/Offset1" asp-route-p="@(currentPage + 1)">@(currentPage + 1)</a>
         }
