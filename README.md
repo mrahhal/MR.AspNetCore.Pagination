@@ -55,7 +55,7 @@ var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
     async id => await _dbContext.Users.FindAsync(int.Parse(id)));
 ```
 
-`id` above will always be a string, so make sure to pares it to your entity's id type.
+`id` above will always be a string, so make sure to parse it to your entity's id type.
 
 **Note:** Check [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more info about keyset pagination.
 
