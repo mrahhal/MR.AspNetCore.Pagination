@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased: 2.0.1
+## 2.0.1 - 2023-02-10
 
 ### Fixed
 
-- Properly annotate the `getReferenceAsync` delegate to allow nulls, which fixes the mismatch in analysis.
+- Properly annotate the `getReferenceAsync` delegate to allow nulls, which fixes the mismatch in analysis ([#7](https://github.com/mrahhal/MR.AspNetCore.Pagination/pull/7))
+
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v2.0.0...v2.0.1)
 
 ## 2.0.0 - 2022-11-05
 
@@ -33,7 +35,7 @@ This version introduces breaking changes. Make sure to read on them in the Chang
 
 - Update MR.EntityFrameworkCore.KeysetPagination dependency
 
-[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.1...2.0.0)
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v1.0.1...v2.0.0)
 
 ## 1.0.1 - 2022-02-18
 
