@@ -44,7 +44,7 @@ services.AddPagination(options =>
 
 Check the [`PaginationOptions`](https://github.com/mrahhal/MR.AspNetCore.Pagination/blob/main/src/MR.AspNetCore.Pagination/PaginationOptions.cs) class to see what you can configure.
 
-And then just inject `IPaginationService` in your controller/page and use it. The [returned result](https://github.com/mrahhal/MR.AspNetCore.Pagination/blob/main/src/MR.AspNetCore.Pagination/PaginationResult.cs) is either a `KeysetPaginationResult<>` or an `OffsetPaginationResult<>`, each containing all the info you need for this pagination result. 
+And then just inject `IPaginationService` in your controller/page and use it. The [returned result](https://github.com/mrahhal/MR.AspNetCore.Pagination/blob/main/src/MR.AspNetCore.Pagination/PaginationResult.cs) is either a `KeysetPaginationResult<>` or an `OffsetPaginationResult<>`, each containing all the info you need for this pagination result.
 
 Do a keyset pagination:
 
@@ -109,6 +109,27 @@ var result = _paginationService.OffsetPaginate(orders);
 ```
 
 There's a helper `PaginationActionDetector` class that can be used with reflection, for example in ASP.NET Core conventions, which can tell you whether the action method returns a pagination result or not. This is what the MR.AspNetCore.Pagination.Swashbuckle package uses to configure swagger for those apis.
+
+## Handling null references (reference has been deleted from the db)
+
+The `getReferenceAsync` delegate parameter on `KeysetPaginateAsync` that you'll provide allows returning nulls. The behavior when that happens is to always return the first page (enforcing Forward direction).
+
+If you want to have a special way to handle this, you'll simply have to do that logic in the `getReferenceAsync` delegate you'll provide. Here's an example:
+```cs
+var result = await _paginationService.KeysetPaginateAsync(
+    query,
+    b => b.Descending(x => x.Created),
+    async id =
+    {
+        var reference = await _dbContext.Users.FindAsync(int.Parse(id));
+        if (reference == null)
+        {
+            // Throw a custom exception which will be captured by some middleware to process.
+            throw new MyKeysetPaginationReferenceIsNullException();
+        }
+        return reference;
+    };
+```
 
 ## Query model as an argument
 
