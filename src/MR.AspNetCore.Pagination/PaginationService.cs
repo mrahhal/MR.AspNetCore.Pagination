@@ -24,7 +24,7 @@ public interface IPaginationService
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<string, Task<T>> getReferenceAsync,
+		Func<string, Task<T?>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		KeysetQueryModel queryModel)
 		where T : class
@@ -44,7 +44,7 @@ public interface IPaginationService
 	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<string, Task<T>> getReferenceAsync,
+		Func<string, Task<T?>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		int? pageSize = null)
 		where T : class
@@ -134,7 +134,7 @@ public static class PaginationServiceExtensions
 		this IPaginationService @this,
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<string, Task<T>> getReferenceAsync,
+		Func<string, Task<T?>> getReferenceAsync,
 		KeysetQueryModel queryModel)
 		where T : class
 		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, queryModel);
@@ -153,7 +153,7 @@ public static class PaginationServiceExtensions
 		this IPaginationService @this,
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<string, Task<T>> getReferenceAsync,
+		Func<string, Task<T?>> getReferenceAsync,
 		int? pageSize = null)
 		where T : class
 		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, pageSize);
@@ -242,7 +242,7 @@ public class PaginationService : IPaginationService
 	public async Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<string, Task<T>> getReferenceAsync,
+		Func<string, Task<T?>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		KeysetQueryModel queryModel)
 		where T : class
@@ -302,7 +302,7 @@ public class PaginationService : IPaginationService
 	public Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
-		Func<string, Task<T>> getReferenceAsync,
+		Func<string, Task<T?>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		int? pageSize = null)
 		where T : class
