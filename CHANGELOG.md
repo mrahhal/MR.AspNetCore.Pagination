@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased: 2.0.1
+
+### Fixed
+
+- Properly annotate the `getReferenceAsync` delegate to allow nulls, which fixes the mismatch in analysis.
+
 ## 2.0.0 - 2022-11-05
 
 This version introduces breaking changes. Make sure to read on them in the Changed section below.
