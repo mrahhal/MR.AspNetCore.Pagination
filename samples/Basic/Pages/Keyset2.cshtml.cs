@@ -27,6 +27,7 @@ namespace Basic.Pages
 
 		public async Task OnGet()
 		{
+#nullable enable
 			var query = _dbContext.Users;
 
 			Users = await _paginationService.KeysetPaginateAsync(
