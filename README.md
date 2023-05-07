@@ -25,6 +25,8 @@ Keyset pagination (also known as cursor/seek pagination) is much more efficient 
 - *: "over large data" here means trying to access _further away_ pages in a table with a large number of records
 - **: Only if you use a stable keyset that leads to unique identification of entities
 
+Check [here](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination#benchmarks) for benchmarks between the two methods.
+
 We recommend keyset pagination over offset, unless you have a requirement for wanting to randomly access pages.
 
 ## Usage
