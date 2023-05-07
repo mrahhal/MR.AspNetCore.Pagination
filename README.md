@@ -18,9 +18,12 @@ Keyset pagination (also known as cursor/seek pagination) is much more efficient 
 
 |                        | Offset                                                        | Keyset                                              |
 | ---------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
-| Performance            | worse over large data                                         | stable over large data                              |
-| Duplicate/Skipped data | always possible if data gets updated between page navigations | no duplication/skipping                             |
+| Performance            | worse over large data*                                        | stable over large data*                             |
+| Duplicate/Skipped data | always possible if data gets updated between page navigations | no duplication/skipping**                           |
 | Pages                  | can access random pages                                       | can only go to first/previous/next/last             |
+
+- *: "over large data" here means trying to access _further away_ pages in a table with a large number of records
+- **: Only if you use a stable keyset that leads to unique identification of entities
 
 We recommend keyset pagination over offset, unless you have a requirement for wanting to randomly access pages.
 
