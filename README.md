@@ -23,7 +23,7 @@ Keyset pagination (also known as cursor/seek pagination) is much more efficient 
 | Pages                  | can access random pages                                       | can only go to first/previous/next/last             |
 
 - *: "over large data" here means trying to access _further away_ pages in a table with a large number of records
-- **: Only if you use a stable keyset that leads to unique identification of entities
+- **: Only if you use a [deterministic keyset](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination#deterministic-keysets)
 
 Check [here](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination#benchmarks) for benchmarks between the two methods.
 
