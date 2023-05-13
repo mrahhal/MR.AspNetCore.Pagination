@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 2.1.0 - 2023-05-13
 
 ### Added
 
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Update MR.EntityFrameworkCore.KeysetPagination package version to v1.3.0
 
-[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v2.0.1...HEAD)
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v2.0.1...v2.1.0)
 
 ## 2.0.1 - 2023-02-10
 
