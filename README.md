@@ -62,9 +62,9 @@ var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
 
 `id` above will always be a string, so make sure to parse it to your entity's id type.
 
-Also note that the keyset should be
+Also note that the keyset should be [deterministic]([https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination#prebuilt-keyset-query-definition](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination#deterministic-keysets)).
 
-Check the readme for [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more info about keyset pagination.
+Check the readme for [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more important info about keyset pagination in general.
 
 Prebuilt keyset query definitions from [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) are also supported:
 
