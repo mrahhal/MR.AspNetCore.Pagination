@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using MR.AspNetCore.Pagination.TestModels;
+using MR.EntityFrameworkCore.KeysetPagination;
 using Xunit;
 
 namespace MR.AspNetCore.Pagination.Tests;
@@ -56,6 +57,21 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 			var result = await Service.KeysetPaginateAsync(
 				query,
 				b => b.Ascending(o => o.Id),
+				async id => await DbContext.Orders.FindAsync(int.Parse(id)));
+
+			var defaultPageSize = new PaginationOptions().DefaultSize;
+			result.Data.Should().HaveCount(defaultPageSize);
+		}
+
+		[Fact]
+		public async Task KeysetPaginateAsync_Prebuilt()
+		{
+			var query = DbContext.Orders;
+			var keysetQuery = KeysetQuery.Build<Order>(b => b.Ascending(o => o.Id));
+
+			var result = await Service.KeysetPaginateAsync(
+				query,
+				keysetQuery,
 				async id => await DbContext.Orders.FindAsync(int.Parse(id)));
 
 			var defaultPageSize = new PaginationOptions().DefaultSize;

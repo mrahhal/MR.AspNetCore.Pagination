@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Add support for prebuilt keyset query definitions
+
+### Other
+
+- Update MR.EntityFrameworkCore.KeysetPagination package version to v1.3.0
+
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v2.0.1...HEAD)
+
 ## 2.0.1 - 2023-02-10
 
 ### Fixed

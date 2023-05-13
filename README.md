@@ -56,13 +56,30 @@ Do a keyset pagination:
 ```cs
 var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
     _dbContext.Users,
-    b => b.Descending(x => x.Created),
+    b => b.Descending(x => x.Created).Descending(x => x.Id),
     async id => await _dbContext.Users.FindAsync(int.Parse(id)));
 ```
 
 `id` above will always be a string, so make sure to parse it to your entity's id type.
 
-**Note:** Check [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more info about keyset pagination.
+Also note that the keyset should be
+
+Check the readme for [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) for more info about keyset pagination.
+
+Prebuilt keyset query definitions from [MR.EntityFrameworkCore.KeysetPagination](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination) are also supported:
+
+```cs
+// In the ctor or someplace similar, set this to a static field for example.
+_usersKeysetQuery = KeysetQuery.Build<User>(b => b.Descending(x => x.Created).Descending(x => x.Id));
+
+// Then when calling KeysetPaginateAsync, we use the prebuilt definition.
+var usersPaginationResult = await _paginationService.KeysetPaginateAsync(
+    _dbContext.Users,
+    _usersKeysetQuery,
+    async id => await _dbContext.Users.FindAsync(int.Parse(id)));
+```
+
+Prebuilt keyset query definitions are the recommended way, but the examples here just build the keyset in `KeysetPaginateAsync` for brevity.
 
 Do a keyset pagination and map to dto:
 

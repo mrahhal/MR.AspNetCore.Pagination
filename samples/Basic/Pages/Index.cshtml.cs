@@ -1,11 +1,15 @@
 ﻿using Basic.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MR.AspNetCore.Pagination;
+using MR.EntityFrameworkCore.KeysetPagination;
 
 namespace Basic.Pages
 {
 	public class IndexModel : PageModel
 	{
+		private static readonly KeysetQueryDefinition<User> _usersKeysetQuery =
+			KeysetQuery.Build<User>(b => b.Descending(x => x.Created));
+
 		private readonly AppDbContext _dbContext;
 		private readonly IPaginationService _paginationService;
 
@@ -26,7 +30,7 @@ namespace Basic.Pages
 
 			Users = await _paginationService.KeysetPaginateAsync(
 				query,
-				b => b.Descending(x => x.Created),
+				_usersKeysetQuery,
 				async id => await _dbContext.Users.FindAsync(int.Parse(id)));
 		}
 	}

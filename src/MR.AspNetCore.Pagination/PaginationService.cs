@@ -16,6 +16,26 @@ public interface IPaginationService
 	/// <typeparam name="T">The type of the entity.</typeparam>
 	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
 	/// <param name="source">The queryable source.</param>
+	/// <param name="keysetQueryDefinition">The prebuilt keyset query definition.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="queryModel">The pagination query model.</param>
+	/// <returns>The keyset pagination result.</returns>
+	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		KeysetQueryDefinition<T> keysetQueryDefinition,
+		Func<string, Task<T?>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		KeysetQueryModel queryModel)
+		where T : class
+		where TOut : class;
+
+	/// <summary>
+	/// Paginates data using keyset pagination.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
 	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
@@ -27,6 +47,26 @@ public interface IPaginationService
 		Func<string, Task<T?>> getReferenceAsync,
 		Func<IQueryable<T>, IQueryable<TOut>> map,
 		KeysetQueryModel queryModel)
+		where T : class
+		where TOut : class;
+
+	/// <summary>
+	/// Paginates data using keyset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <typeparam name="TOut">The type of the transformed object.</typeparam>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="keysetQueryDefinition">The prebuilt keyset query definition.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="map">A map func to convert <typeparamref name="T"/> to <typeparamref name="TOut"/>.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <returns>The keyset pagination result.</returns>
+	Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		KeysetQueryDefinition<T> keysetQueryDefinition,
+		Func<string, Task<T?>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize = null)
 		where T : class
 		where TOut : class;
 
@@ -126,6 +166,25 @@ public static class PaginationServiceExtensions
 	/// <typeparam name="T">The type of the entity.</typeparam>
 	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
 	/// <param name="source">The queryable source.</param>
+	/// <param name="keysetQueryDefinition">The prebuilt keyset query definition.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="queryModel">The pagination query model.</param>
+	/// <returns>The keyset pagination result.</returns>
+	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
+		this IPaginationService @this,
+		IQueryable<T> source,
+		KeysetQueryDefinition<T> keysetQueryDefinition,
+		Func<string, Task<T?>> getReferenceAsync,
+		KeysetQueryModel queryModel)
+		where T : class
+		=> @this.KeysetPaginateAsync(source, keysetQueryDefinition, getReferenceAsync, query => query, queryModel);
+
+	/// <summary>
+	/// Paginates data using keyset pagination.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The queryable source.</param>
 	/// <param name="builderAction">An action that builds the keyset.</param>
 	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
 	/// <param name="queryModel">The pagination query model.</param>
@@ -138,6 +197,25 @@ public static class PaginationServiceExtensions
 		KeysetQueryModel queryModel)
 		where T : class
 		=> @this.KeysetPaginateAsync(source, builderAction, getReferenceAsync, query => query, queryModel);
+
+	/// <summary>
+	/// Paginates data using keyset pagination with a model parsed from the request's query.
+	/// </summary>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <param name="this">The <see cref="IPaginationService"/> instance.</param>
+	/// <param name="source">The queryable source.</param>
+	/// <param name="keysetQueryDefinition">The prebuilt keyset query definition.</param>
+	/// <param name="getReferenceAsync">A func to load the reference from its id.</param>
+	/// <param name="pageSize">The page size. This takes priority over all other sources.</param>
+	/// <returns>The keyset pagination result.</returns>
+	public static Task<KeysetPaginationResult<T>> KeysetPaginateAsync<T>(
+		this IPaginationService @this,
+		IQueryable<T> source,
+		KeysetQueryDefinition<T> keysetQueryDefinition,
+		Func<string, Task<T?>> getReferenceAsync,
+		int? pageSize = null)
+		where T : class
+		=> @this.KeysetPaginateAsync(source, keysetQueryDefinition, getReferenceAsync, query => query, pageSize);
 
 	/// <summary>
 	/// Paginates data using keyset pagination with a model parsed from the request's query.
@@ -239,7 +317,31 @@ public class PaginationService : IPaginationService
 	}
 
 	/// <inheritdoc/>
-	public async Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+	public Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		KeysetQueryDefinition<T> keysetQueryDefinition,
+		Func<string, Task<T?>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		KeysetQueryModel queryModel)
+		where T : class
+		where TOut : class
+	{
+		if (source == null) throw new ArgumentNullException(nameof(source));
+		if (keysetQueryDefinition == null) throw new ArgumentNullException(nameof(keysetQueryDefinition));
+		if (getReferenceAsync == null) throw new ArgumentNullException(nameof(getReferenceAsync));
+		if (map == null) throw new ArgumentNullException(nameof(map));
+		if (queryModel == null) throw new ArgumentNullException(nameof(queryModel));
+
+		return KeysetPaginateAsync(
+			source,
+			(query, direction, reference) => query.KeysetPaginate(keysetQueryDefinition, direction, reference),
+			getReferenceAsync,
+			map,
+			queryModel);
+	}
+
+	/// <inheritdoc/>
+	public Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
 		IQueryable<T> source,
 		Action<KeysetPaginationBuilder<T>> builderAction,
 		Func<string, Task<T?>> getReferenceAsync,
@@ -252,7 +354,25 @@ public class PaginationService : IPaginationService
 		if (builderAction == null) throw new ArgumentNullException(nameof(builderAction));
 		if (getReferenceAsync == null) throw new ArgumentNullException(nameof(getReferenceAsync));
 		if (map == null) throw new ArgumentNullException(nameof(map));
+		if (queryModel == null) throw new ArgumentNullException(nameof(queryModel));
 
+		return KeysetPaginateAsync(
+			source,
+			(query, direction, reference) => query.KeysetPaginate(builderAction, direction, reference),
+			getReferenceAsync,
+			map,
+			queryModel);
+	}
+
+	private async Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		Func<IQueryable<T>, KeysetPaginationDirection, object?, KeysetPaginationContext<T>> callKeysetPaginate,
+		Func<string, Task<T?>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		KeysetQueryModel queryModel)
+		where T : class
+		where TOut : class
+	{
 		var query = source;
 		var pageSize = queryModel.Size ?? _options.DefaultSize;
 
@@ -263,12 +383,12 @@ public class PaginationService : IPaginationService
 
 		if (queryModel.Last)
 		{
-			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Backward);
+			keysetContext = callKeysetPaginate(query, KeysetPaginationDirection.Backward, null);
 		}
 		else if (queryModel.After != null)
 		{
 			var reference = await getReferenceAsync(queryModel.After);
-			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward, reference);
+			keysetContext = callKeysetPaginate(query, KeysetPaginationDirection.Forward, reference);
 		}
 		else if (queryModel.Before != null)
 		{
@@ -277,12 +397,12 @@ public class PaginationService : IPaginationService
 			// If reference is null (maybe the entity was deleted from the database), we want to
 			// always return the first page, so enforce a Forward direction.
 			var direction = reference != null ? KeysetPaginationDirection.Backward : KeysetPaginationDirection.Forward;
-			keysetContext = query.KeysetPaginate(builderAction, direction, reference);
+			keysetContext = callKeysetPaginate(query, direction, reference);
 		}
 		else
 		{
 			// First page
-			keysetContext = query.KeysetPaginate(builderAction, KeysetPaginationDirection.Forward);
+			keysetContext = callKeysetPaginate(query, KeysetPaginationDirection.Forward, null);
 		}
 
 		data = await keysetContext.Query
@@ -296,6 +416,22 @@ public class PaginationService : IPaginationService
 		var hasNext = await keysetContext.HasNextAsync(data);
 
 		return new KeysetPaginationResult<TOut>(data, totalCount, pageSize, hasPrevious, hasNext);
+	}
+
+	/// <inheritdoc/>
+	public Task<KeysetPaginationResult<TOut>> KeysetPaginateAsync<T, TOut>(
+		IQueryable<T> source,
+		KeysetQueryDefinition<T> keysetQueryDefinition,
+		Func<string, Task<T?>> getReferenceAsync,
+		Func<IQueryable<T>, IQueryable<TOut>> map,
+		int? pageSize = null)
+		where T : class
+		where TOut : class
+	{
+		var queryModel = ParseKeysetQueryModel(
+			_httpContext.Request.Query,
+			pageSize);
+		return KeysetPaginateAsync(source, keysetQueryDefinition, getReferenceAsync, map, queryModel);
 	}
 
 	/// <inheritdoc/>
