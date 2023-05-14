@@ -190,6 +190,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 ```
 
+## Benchmarks
+
+Check this [blog post](https://github.com/mrahhal/blog/blob/main/posts/2023-05-14-offset-vs-keyset-pagination/post.md) for a detailed look into benchmarks between offset and keyset pagination.
+
 ## Samples
 
 Check the [samples](samples) folder for project samples.
