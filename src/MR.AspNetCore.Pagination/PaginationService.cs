@@ -663,7 +663,7 @@ public class PaginationService : IPaginationService
 
 	private IQueryCollection GetHttpContextRequestQueryOrThrow()
 	{
-		var context = _httpContext ?? throw new InvalidOperationException("HttpContext is required.");
+		var context = _httpContext ?? throw new InvalidOperationException("HttpContext is required to parse the pagination model from the request query.");
 		return context.Request.Query;
 	}
 }
