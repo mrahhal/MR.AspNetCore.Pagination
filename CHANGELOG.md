@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Improved
+### Changed
 
-- Require HttpContext only where needed instead of throwing on ctor ([#11](https://github.com/mrahhal/MR.AspNetCore.Pagination/pull/11))
+- Require HttpContext in default `PaginationService` only where needed instead of throwing on ctor ([#11](https://github.com/mrahhal/MR.AspNetCore.Pagination/pull/11))
 
 [**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v2.1.0...HEAD)
 
