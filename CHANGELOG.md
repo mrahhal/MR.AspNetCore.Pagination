@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Require HttpContext in default `PaginationService` only where needed instead of throwing on ctor ([#11](https://github.com/mrahhal/MR.AspNetCore.Pagination/pull/11))
+
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v2.2.0...HEAD)
+
 ## 2.2.0 - 2023-10-23
 
 ### Other
