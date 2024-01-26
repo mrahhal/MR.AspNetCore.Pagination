@@ -311,3 +311,17 @@ public class PaginationServiceTest : IClassFixture<DatabaseFixture>
 		}
 	}
 }
+
+public class PaginationServiceQuickTest
+{
+	[Fact]
+	public void DoesNotThrowInCtorForNoHttpContext()
+	{
+		var services = new ServiceCollection();
+		services.AddTransient<PaginationService>();
+		services.Configure<PaginationOptions>(o => { });
+		var provider = services.BuildServiceProvider();
+
+		var _ = provider.GetRequiredService<PaginationService>();
+	}
+}

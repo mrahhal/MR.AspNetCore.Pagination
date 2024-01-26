@@ -302,18 +302,18 @@ public static class PaginationServiceExtensions
 /// </summary>
 public class PaginationService : IPaginationService
 {
-	private readonly HttpContext _httpContext;
 	private readonly PaginationOptions _options;
+	private readonly HttpContext? _httpContext;
 
 	/// <summary>
 	/// Creates a new instance of <see cref="PaginationService"/>.
 	/// </summary>
 	public PaginationService(
-		IHttpContextAccessor httpContextAccessor,
-		IOptions<PaginationOptions> options)
+		IOptions<PaginationOptions> options,
+		IHttpContextAccessor? httpContextAccessor = null)
 	{
-		_httpContext = httpContextAccessor?.HttpContext ?? throw new InvalidOperationException("HttpContext is required.");
 		_options = options.Value;
+		_httpContext = httpContextAccessor?.HttpContext;
 	}
 
 	/// <inheritdoc/>
@@ -429,7 +429,7 @@ public class PaginationService : IPaginationService
 		where TOut : class
 	{
 		var queryModel = ParseKeysetQueryModel(
-			_httpContext.Request.Query,
+			GetHttpContextRequestQueryOrThrow(),
 			pageSize);
 		return KeysetPaginateAsync(source, keysetQueryDefinition, getReferenceAsync, map, queryModel);
 	}
@@ -445,7 +445,7 @@ public class PaginationService : IPaginationService
 		where TOut : class
 	{
 		var queryModel = ParseKeysetQueryModel(
-			_httpContext.Request.Query,
+			GetHttpContextRequestQueryOrThrow(),
 			pageSize);
 		return KeysetPaginateAsync(source, builderAction, getReferenceAsync, map, queryModel);
 	}
@@ -487,7 +487,7 @@ public class PaginationService : IPaginationService
 		where TOut : class
 	{
 		var queryModel = ParseOffsetQueryModel(
-			_httpContext.Request.Query,
+			GetHttpContextRequestQueryOrThrow(),
 			pageSize);
 		return OffsetPaginateAsync(source, map, queryModel);
 	}
@@ -529,7 +529,7 @@ public class PaginationService : IPaginationService
 		where TOut : class
 	{
 		var queryModel = ParseOffsetQueryModel(
-			_httpContext.Request.Query,
+			GetHttpContextRequestQueryOrThrow(),
 			pageSize);
 		return OffsetPaginate(source, map, queryModel);
 	}
@@ -659,5 +659,11 @@ public class PaginationService : IPaginationService
 		}
 
 		return model;
+	}
+
+	private IQueryCollection GetHttpContextRequestQueryOrThrow()
+	{
+		var context = _httpContext ?? throw new InvalidOperationException("HttpContext is required to parse the pagination model from the request query.");
+		return context.Request.Query;
 	}
 }
