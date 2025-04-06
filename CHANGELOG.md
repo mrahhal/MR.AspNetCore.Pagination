@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.1.0 - Unrelased
+
+This version targets .net 8.
+
+### Changed
+
+- Update to .net 8 ([#15](https://github.com/mrahhal/MR.AspNetCore.Pagination/pull/15))
+- Update MR.EntityFrameworkCore.KeysetPagination dependency to v1.5.0.
+
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v3.0.0...v3.1.0)
+
 ## 3.0.0 - 2024-01-27
 
 ### Changed

@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen(c =>
 	c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 	c.CustomSchemaIds(x => x.FullName);
 
-	c.TagActionsBy(api => new[] { api.RelativePath });
+	c.TagActionsBy(api => [api.RelativePath]);
 
 	c.ConfigurePagination();
 });
@@ -40,9 +40,6 @@ app.UseSwaggerUI(c =>
 	c.OAuthClientId("swagger");
 });
 
-app.UseEndpoints(endpoints =>
-{
-	endpoints.MapControllers();
-});
+app.MapControllers();
 
 app.Run();
