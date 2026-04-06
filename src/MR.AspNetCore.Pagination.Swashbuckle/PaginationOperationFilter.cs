@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MR.AspNetCore.Pagination.Swashbuckle;
@@ -34,9 +34,9 @@ public class PaginationOperationFilter : IOperationFilter
 			CreateParameter(_paginationOptions.PageQueryParameterName, "The page", intSchema);
 		}
 
-		void CreateParameter(string name, string description, OpenApiSchema? schema = null)
+		void CreateParameter(string name, string description, IOpenApiSchema? schema = null)
 		{
-			operation.Parameters.Add(new OpenApiParameter
+			operation.Parameters?.Add(new OpenApiParameter
 			{
 				Required = false,
 				In = ParameterLocation.Query,
