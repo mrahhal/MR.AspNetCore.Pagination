@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.2.0 - 2026-04-06
+
+This version targets .net 10.
+
+### Changed
+
+- Update to .net 10 ([#16](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/pull/16) by [@mrahhal](https://github.com/mrahhal))
+
+[**Full diff**](https://github.com/mrahhal/MR.EntityFrameworkCore.KeysetPagination/compare/v3.1.0...v3.2.0)
+
 ## 3.1.0 - 2025-04-06
 
 This version targets .net 8.
